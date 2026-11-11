@@ -1,35 +1,21 @@
-"""notatnik
-zbudowanie skill -> ocen : ma polegac na uczciwej ocenie zaporponowanego prze ze mnie roziwazania, ocena czy jest
-zbudowanie skill -> code_BudowaSekcji : ma polegac na zbudowaniu pelnego elementu programu kod .py -> js -> html
+"""Karta „VaR": ryzyko strat (Value at Risk) dla dowolnego tickera.
 
-1. skill
-2. nowa arhitektura pliku
-"""
+Pokazuje, ile najwyżej można stracić na pozycji w danym horyzoncie przy zadanym poziomie ufności (np. 99%). Wartość jest
+liczona kroczaco dla każdego dnia z historii notowań trzema metodami: parametryczną bez korekty o trend, parametryczną
+z korektą o trend oraz historyczną, z percentyla empirycznego zwrotów. Każda metoda ma własny horyzont i własne wygładzanie
+SMA linii na wykresie, a poziom ufności, okno odchylenia i okno średniej są wspólne. Progi są przesunięte o horyzont danej
+metody do przodu: próg policzony na dzień t jest prognozą na dzień t + horyzont, nie oceną samego dnia t.
 
+Wzorzec pliku jak w pozostałych kartach (.claude/CLAUDE.md, „Karty: wzorzec jednoplikowy"): cała logika Pythona, fragmenty
+HTML i kod JS wykonywany w przeglądarce są w tym jednym pliku, a `generuj()` wypisuje z niego `index.html` i `app.js`
+(tych dwóch plików nie edytuje się ręcznie). Rachunek liczy się w przeglądarce; jego odpowiednikiem w Pythonie jest
+`oblicz_var_kroczaco()`, z którego korzysta też karta Stan rynku (src/stan_rynku/stan_rynku.py), żeby VaR na obu kartach
+liczył się tą samą metodą.
 
-"""Karta „VaR" — ryzyko strat (Value at Risk) dla dowolnego tickera.
+Notowania: w wersji poglądowej przeglądarka czyta zapisaną próbkę (web/shared/probka.js, dane w data/przyklad/), a w pełnej
+platformie pyta własny serwer pośredniczący do Yahoo Finance (stała WORKER_URL w kodzie JS).
 
-Zbudowane skillem code-element-write na podstawie zatwierdzonej specyfikacji
-(plik pierwotnej specyfikacji tej karty już nie istnieje w repo; zmiany
-interfejsu z drugiej rundy opisuje specyfikacja pełnej platformy, poza wersją pokazową). Wzorzec pliku — patrz CLAUDE.md, „Karty: wzorzec
-jednoplikowy" — CAŁA logika Pythona, fragmenty HTML i kod JS wykonywany w
-przeglądarce mieszkają w tym jednym pliku; `generuj()` wypisuje z niego
-`index.html`/`app.js` — tych dwóch plików nigdy nie edytuje się ręcznie.
-
-To pełna wymiana poprzedniej zawartości tego pliku (wykresy ceny/wolumenu
-z wcześniejszej próby — zostają tylko w historii gita, nic więcej ich tu
-nie referencuje).
-
-Trzy metody liczenia VaR, wszystkie z notatnika źródłowego (plik notatnika
-już nie istnieje w repo), liczone kroczaco dla
-każdego dnia z historii: parametryczna bez korekty o trend, parametryczna
-z korektą o trend, oraz historyczna z percentyla empirycznego zwrotów.
-Każda z trzech metod ma własny horyzont i własne wygładzanie SMA linii na
-wykresie; poziom ufności, okno odchylenia i okno średniej są wspólne.
-Progi są przesunięte o horyzont danej metody do przodu — próg policzony na
-dzień t jest prognozą na dzień t + horyzont, nie oceną samego dnia t.
-
-Użycie: `python VaR.py` (z tego katalogu) regeneruje index.html i app.js.
+Użycie: `python src/var/var.py` z korzenia repozytorium (albo `make build`) regeneruje index.html i app.js.
 """
 
 from pathlib import Path
@@ -269,9 +255,9 @@ def zbuduj_wykres_var(
     )
     return do_wykresu_var(df)
 
-# Okna 1 i 2 siatki: „Parametry" (z przyciskiem „Wzory …" w nagłówku — dawniej w bloku
+# Okna 1 i 2 siatki: „Parametry" (z przyciskiem „Wzory …" w nagłówku, dawniej w bloku
 # opisu strony, usuniętym w zadaniu 016; cała obsługa okna modalnego wzorów zostaje
-# w elemencie „wzory") oraz „Wykres — cena i progi VaR w czasie". Kontener siatki
+# w elemencie „wzory") oraz „Wykres: cena i progi VaR w czasie". Kontener siatki
 # `.t-siatka` składa generuj().
 HTML_FRAGMENT = """
 <section class="karta t-okno t-k4">
@@ -338,7 +324,7 @@ HTML_FRAGMENT = """
 </section>
 
 <section class="karta t-okno t-k8 t-naroznik">
-  <header class="t-naglowek"><h2>Wykres — cena i progi VaR w czasie</h2></header>
+  <header class="t-naglowek"><h2>Wykres: cena i progi VaR w czasie</h2></header>
   <div class="t-tresc">
     <div class="var-zakres">
       <button type="button" class="var-zakres-btn" data-zakres="1m">1m</button>
@@ -359,7 +345,7 @@ HTML_FRAGMENT = """
 """
 
 APP_JS = """
-const WORKER_URL = "https://proxy.example.invalid"; // adres własnego proxy do Yahoo Finance (poza wersją pokazową)
+const WORKER_URL = ""; // adres własnego proxy do Yahoo Finance; w wersji poglądowej pusty: notowania czyta shared/probka.js
 const TLO_WYKRES = "#131722";
 const SIATKA_WYKRES = "#2a2e39";
 const PRZYGASZONY_WYKRES = "#868993";
@@ -374,10 +360,9 @@ const KOLOR_PERCENTYL = "#d9534f";
 
 // Elementy dodane niżej (b/c/d) dopisują tu swoją funkcję renderującą —
 // woła je wspólny pokaz() poniżej, PO jednym wspólnym pobraniu/obliczeniu,
-// żeby jeden klik "Policz" nie odpytywał Yahoo Finance cztery razy z rzędu
-// (uproszczenie względem specyfikacji na poziomie JS — Część 2 opisuje
-// cztery niezależne orkiestratory, ale w przeglądarce dzielą one to samo
-// pobranie i te same obliczenia, bo parametry wejściowe są identyczne).
+// żeby jeden klik "Policz" nie odpytywał Yahoo Finance cztery razy z rzędu:
+// cztery niezależne elementy strony dzielą jedno pobranie i te same obliczenia,
+// bo parametry wejściowe są identyczne.
 const WSPOLNE_RENDERY_VAR = [];
 
 function isoZSekund(sekundyUTC) {
@@ -417,12 +402,17 @@ function renderujTabeleObiektow(idTabeli, wiersze) {
 // (np. 50y/100y) Yahoo honoruje poprawnie i zwraca prawdziwe dane dzienne
 // — 100y to zapas bezpieczeństwa dla starych indeksów z długą historią.
 async function pobierzNotowaniaZwrot(ticker) {
-  const url = `${WORKER_URL}/quote?ticker=${encodeURIComponent(ticker)}&range=100y&interval=1d`;
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Yahoo Finance (przez proxy) zwrócił błąd ${res.status} dla ${ticker}`);
+  const sciezka = `/quote?ticker=${encodeURIComponent(ticker)}&range=100y&interval=1d`;
+  let surowe;
+  if (WORKER_URL) {
+    const res = await fetch(WORKER_URL + sciezka);
+    if (!res.ok) {
+      throw new Error(`Yahoo Finance (przez proxy) zwrócił błąd ${res.status} dla ${ticker}`);
+    }
+    surowe = await res.json();
+  } else {
+    surowe = await PROBKA.json(sciezka); // wersja poglądowa: zapisana próbka zamiast proxy
   }
-  const surowe = await res.json();
   const wynik = surowe?.chart?.result?.[0];
   const znaczniki = wynik?.timestamp;
   const quote = wynik?.indicators?.quote?.[0] || {};
@@ -662,8 +652,8 @@ function narysujWykresVar(tabela, smaOkna) {
   const el = document.getElementById("v-wykres");
   if (typeof LightweightCharts === "undefined") {
     el.innerHTML =
-      '<div class="wykres-blad">Nie udało się wczytać biblioteki TradingView Lightweight Charts z sieci — ' +
-      "wykres interaktywny wymaga dostępu do unpkg.com.</div>";
+      '<div class="wykres-blad">Nie udało się wczytać biblioteki wykresów (TradingView Lightweight Charts): ' +
+      "wykres interaktywny jej wymaga, a tabele obok działają bez niej.</div>";
     return;
   }
   if (!wykresVar) {
@@ -759,7 +749,7 @@ async function pokaz() {
   const przycisk = document.getElementById("v-btn-policz");
   status.classList.remove("blad");
   przycisk.disabled = true;
-  status.textContent = "Pobieranie notowań z Yahoo Finance…";
+  status.textContent = WORKER_URL ? "Pobieranie notowań z Yahoo Finance…" : "Wczytywanie zapisanej próbki notowań…";
   try {
     const ticker = document.getElementById("v-ticker").value.trim().toUpperCase();
     if (!ticker) throw new Error("wpisz ticker");
@@ -786,7 +776,7 @@ async function pokaz() {
     for (const render of WSPOLNE_RENDERY_VAR) render(tabela);
 
     const ostatni = tabela[tabela.length - 1];
-    status.textContent = `${ticker}: ${tabela.length} sesji (ostatnia: ${ostatni.data})`;
+    status.textContent = `${ticker}: ${tabela.length} sesji (ostatnia: ${ostatni.data})` + (WORKER_URL ? "" : " · zapisana próbka, nie dane na żywo");
   } catch (err) {
     status.textContent = `Błąd: ${err.message}`;
     status.classList.add("blad");
@@ -880,7 +870,7 @@ def zbuduj_tabele_szczegolowa(
 
 HTML_FRAGMENT_SZCZEGOLOWA = """
 <section class="karta t-okno t-k8">
-  <header class="t-naglowek"><h2>Tabela szczegółowa — wybrany okres</h2></header>
+  <header class="t-naglowek"><h2>Tabela szczegółowa: wybrany okres</h2></header>
   <div class="t-tresc">
     <div class="siatka-formularza">
       <label>Od
@@ -964,7 +954,7 @@ HTML_FRAGMENT_WZORY = """
     <button type="button" class="var-modal-x" data-zamknij aria-label="Zamknij">×</button>
     <h2 id="v-wzory-tytul">Wzory użyte do obliczeń</h2>
     <div class="var-wzory-tresc">
-      <p><strong>Kwantyl (z_c)</strong> — liczba odchyleń standardowych odpowiadająca
+      <p><strong>Kwantyl (z_c)</strong>: liczba odchyleń standardowych odpowiadająca
       wybranemu poziomowi pewności w standardowym rozkładzie normalnym.</p>
       <p><strong>VaR bez korekty</strong> = z_c × σ_roczne × √(horyzont / 252) × cena</p>
       <p><strong>VaR z korektą</strong> = cena × (z_c × σ_roczne × √(horyzont/252) − μ_roczne × horyzont/252)</p>
@@ -994,6 +984,31 @@ document.addEventListener("keydown", (e) => {
 });
 """
 
+#_______________________________________________________________________________
+# wersja poglądowa: podpowiedź tickerów i pierwsze przeliczenie
+#_______________________________________________________________________________
+
+# Gdy nie ma serwera pośredniczącego (WORKER_URL pusty), notowania pochodzą z zapisanych próbek (web/shared/probka.js).
+# Ten fragment podpowiada, dla jakich tickerów próbki istnieją, i od razu liczy VaR dla tickera z pola, żeby strona
+# po wejściu nie była pusta. Doklejany jako ostatni w generuj(), więc wszystkie renderery tabel są już zarejestrowane.
+
+APP_JS_PROBKA = """
+if (!WORKER_URL && typeof PROBKA !== "undefined") {
+  PROBKA.indeks().then((spis) => {
+    // Tylko tickery z historią wystarczającą do rachunku (indeks z jedną sesją służy karcie Pozycja do samej ceny).
+    const tickery = Object.keys(spis.notowania).filter((t) => spis.notowania[t].punktow >= 250);
+    const lista = document.createElement("datalist");
+    lista.id = "v-tickery";
+    lista.innerHTML = tickery.map((t) => '<option value="' + t + '"></option>').join("");
+    document.body.appendChild(lista);
+    const pole = document.getElementById("v-ticker");
+    pole.setAttribute("list", "v-tickery");
+    pole.title = "W wersji poglądowej są zapisane próbki tylko dla: " + tickery.join(", ");
+  }).catch(() => {});
+  pokaz();
+}
+"""
+
 #===============================================================================
 # Generator — jedyne miejsce, które dotyka index.html i app.js
 #===============================================================================
@@ -1005,8 +1020,8 @@ SCIEZKA_JS = SCIEZKA_KATALOGU / "app.js"
 
 NAGLOWEK_JS = (
     '"use strict";\n\n'
-    "// PLIK WYGENEROWANY z VaR.py (stałe APP_JS*) — nie edytuj tutaj,\n"
-    "// zmiany rób w VaR.py i uruchom `python VaR.py`.\n\n"
+    "// PLIK WYGENEROWANY z src/var/var.py (stałe APP_JS*), nie edytuj tutaj.\n"
+    "// Zmiany rób w src/var/var.py i uruchom `make build`.\n\n"
 )
 
 
@@ -1031,7 +1046,7 @@ def generuj() -> None:
     )
     fragment_js = "\n\n".join(
         frag.strip("\n") for frag in [
-            APP_JS, APP_JS_WYNIKI, APP_JS_SZCZEGOLOWA, APP_JS_WZORY,
+            APP_JS, APP_JS_WYNIKI, APP_JS_SZCZEGOLOWA, APP_JS_WZORY, APP_JS_PROBKA,
         ]
     ) + "\n"
 

@@ -28,7 +28,9 @@
   // miejscach). Nazwa karty to też DOMYŚLNA SEKCJA zadania tworzonego na tej
   // karcie (zadanie 015): „Youtube" → sekcja „Youtube", „News" → „News".
   const KARTY = [
+    ["pozycja", "Pozycja"],
     ["stan-rynku", "Stan rynku"],
+    ["VaR", "VaR"],
     ["biblioteka", "Biblioteka"],
   ];
 

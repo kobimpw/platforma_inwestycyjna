@@ -1,7 +1,8 @@
 name: Pages, statyczna strona poglądowa
 
-# Składa katalog _site/ skryptem src/narzedzia/zbuduj_strone.py (strona z web/ plus dwa pliki danych karty Stan rynku)
-# i publikuje go na GitHub Pages. To wersja poglądowa: dane są zamrożone, więc workflow nie pobiera niczego z sieci.
+# Składa katalog _site/ skryptem src/narzedzia/zbuduj_strone.py (strona z web/, dwa pliki danych karty Stan rynku i próbki
+# notowań i opcji dla kart Pozycja i VaR) i publikuje go na GitHub Pages. To wersja poglądowa: dane są zamrożone, więc
+# workflow nie pobiera niczego z sieci.
 #
 # Jednorazowo trzeba w ustawieniach repozytorium wybrać: Settings, Pages, Build and deployment, Source: GitHub Actions.
 # Potem wystarczy uruchomić ten workflow ręcznie (Actions, Pages, Run workflow) albo zrobić push zmiany na gałąź main.
@@ -13,6 +14,7 @@ on:
       - "web/**"
       - "data/stan-rynku/stan.json"
       - "data/stan-rynku/ocena.json"
+      - "data/przyklad/**"
       - "src/narzedzia/zbuduj_strone.py"
       - ".github/workflows/pages.yml"
 

@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-GENERATORY = ["biblioteka/biblioteka.py", "stan_rynku/stan_rynku.py"]   # karty w wersji poglądowej (te same, co w Makefile)
+GENERATORY = ["biblioteka/biblioteka.py", "pozycja/pozycja.py", "stan_rynku/stan_rynku.py", "var/var.py"]   # karty w wersji poglądowej (te same, co w Makefile)
 POMIJANE = shutil.ignore_patterns("node_modules", "__pycache__")
 
 

@@ -18,7 +18,7 @@ HISTORYCZNE = ("projekty/", "docs/specyfikacja/")
 # W tej wersji poglądowej nie ma katalogów z treściami (posty, transkrypcje, artykuły), więc lista jest pusta.
 TRESCI = ()
 # Pliki generowane z kodu: sprawdzamy ich źródła (.py, .md), a zgodność z wynikiem generatora pilnuje test_regeneracja_kart.
-GENEROWANE = re.compile(r"^web/(?:biblioteka|stan-rynku)/(?:index\.html|app\.js)$|^web/shared/mapa-kodu\.json$")
+GENEROWANE = re.compile(r"^web/(?:biblioteka|pozycja|stan-rynku|VaR)/(?:index\.html|app\.js)$|^web/shared/mapa-kodu\.json$")
 # Testy zawierają celowo nieistniejące ścieżki jako dane wejściowe.
 POMIJANE = ("tests/",)
 
@@ -26,6 +26,10 @@ POMIJANE = ("tests/",)
 WYJATKI = {
     "ustawienia/stan-rynku-przestrzen.json": "w pełnej platformie plik powstaje przy zapisie układu ze strony; w wersji pokazowej katalogu ustawienia/ nie ma",
     "ustawienia/uklad-stan-rynku.json": "dawne ustawienie, z którego pochodzi układ domyślny; w wersji pokazowej katalogu ustawienia/ nie ma",
+    "ustawienia/pozycja.json": "profile karty Pozycja; w pełnej platformie plik powstaje przy zapisie ze strony, w wersji pokazowej katalogu ustawienia/ nie ma",
+    "ustawienia/pozycja-przestrzen.json": "układ okien karty Pozycja; jak wyżej, powstaje dopiero przy zapisie ze strony",
+    "ustawienia/uklad-pozycja.json": "dawne ustawienie, z którego pochodzi układ domyślny Pozycji; w wersji pokazowej katalogu ustawienia/ nie ma",
+    "ustawienia/historia-zakladow.csv": "historia zakładów karty Pozycja; w pełnej platformie zapisuje ją strona przez token GitHub, tu jej nie ma",
     "data/platforma.sqlite": "baza pochodna budowana poleceniem `make db`, poza repozytorium (.gitignore)",
 }
 

@@ -45,9 +45,9 @@
     <h2>To nie jest pełnoprawna platforma</h2>
     <p>To statyczna, poglądowa część projektu, przygotowana dla rekrutera, żeby można było zobaczyć, jak wygląda i jak działa interfejs. Pełna platforma jest prywatna: pobiera dane na żywo, ma bramkę logowania i zapisuje ustawienia użytkownika w repozytorium. Tutaj jest tylko to, co da się pokazać bez serwera.</p>
     <ul>
-      <li>Dane są zamrożone: to migawka z jednej sesji giełdowej, nic się tu nie odświeża.</li>
-      <li>Nie ma zapisu: układ okien zapamiętuje wyłącznie Twoja przeglądarka.</li>
-      <li>Pozostałe karty pełnej platformy (m.in. opcje, ryzyko VaR, sezon wyników, wykresy) nie są częścią tej wersji.</li>
+      <li>Dane są zamrożone: Stan rynku to migawka z jednej sesji giełdowej, a karty Pozycja i VaR liczą na zapisanej próbce notowań i opcji z jednego dnia. Nic się tu nie odświeża.</li>
+      <li>Nie ma zapisu: układ okien i profile zapamiętuje wyłącznie Twoja przeglądarka.</li>
+      <li>Pozostałe karty pełnej platformy (m.in. Social z wiadomościami, sezon wyników, ETF-y sektorowe, opcje, wykresy) nie są częścią tej wersji.</li>
     </ul>
   </section>
 
@@ -57,6 +57,16 @@
     <a class="start-karta" href="stan-rynku/">
       <h3>Stan rynku</h3>
       <p>Sygnał rynku, 54 wskaźniki w grupach Makro, Rynek i Technika, indeks nastrojów, historia sygnału od 2000 r. i tabela jego skuteczności.</p>
+      <span class="start-przejdz">Otwórz kartę →</span>
+    </a>
+    <a class="start-karta" href="pozycja/">
+      <h3>Pozycja</h3>
+      <p>Generator zakładów (spready z opcji call) pod pozycję w ETF: 10 wskaźników rynku opcji, barometr, propozycje z oceną, wykres wypłaty i tabela zakładów. Liczby pozycji w profilach są fikcyjne.</p>
+      <span class="start-przejdz">Otwórz kartę →</span>
+    </a>
+    <a class="start-karta" href="VaR/">
+      <h3>VaR</h3>
+      <p>Ryzyko strat (Value at Risk) trzema metodami, liczone kroczaco dla każdego dnia historii, z wykresem cen i progów oraz tabelą. Domyślnie SPY z zapisanej próbki.</p>
       <span class="start-przejdz">Otwórz kartę →</span>
     </a>
     <a class="start-karta" href="biblioteka/">
@@ -75,6 +85,7 @@
     <h2>Jak czytać tę wersję</h2>
     <ul>
       <li>Karta „Stan rynku" jest w pełni działająca: liczy ją skrypt w Pythonie, a przeglądarka tylko czyta gotowy plik z danymi, więc bez serwera wygląda tak samo jak w pełnej platformie.</li>
+      <li>Karty „Pozycja" i „VaR" liczą w przeglądarce, ale zamiast notowań na żywo dostają zapisaną próbkę z Yahoo Finance i Cboe. Terminy opcji liczą się od dnia próbki, więc pokaz się nie psuje, a liczby jednostek i ceny kupna w profilach Pozycji są fikcyjne.</li>
       <li>Okna można przesuwać, zmieniać im rozmiar i układać w zakładki, a kliknięcie numerka bloku pokazuje fragment kodu, z którego ten blok powstał.</li>
       <li>Motyw Dzień, Noc albo Auto przełączysz ikoną na dole paska po lewej.</li>
     </ul>
@@ -85,19 +96,25 @@
   </footer>
 </main>
 <script>
-  // Pokazuje, z której sesji jest migawka i jaki sygnał wtedy wyszedł (dane z tego samego pliku, który czyta karta Stan rynku).
+  // Pokazuje, z której sesji jest migawka i jaki sygnał wtedy wyszedł (dane z tego samego pliku, który czyta karta Stan rynku),
+  // oraz z jakiego dnia jest próbka notowań i opcji dla kart VaR i Pozycja (spis próbek).
   (function () {
     var miejsce = document.getElementById("start-teraz");
-    fetch("data/stan-rynku/stan.json", { cache: "no-cache" })
-      .then(function (odp) { return odp.ok ? odp.json() : Promise.reject(new Error("HTTP " + odp.status)); })
-      .then(function (d) {
-        var dzien = String(d.sesja).split("-").reverse().join(".");
-        var wynik = d.sygnal && typeof d.sygnal.wynik === "number" ? (d.sygnal.wynik > 0 ? "+" : "") + d.sygnal.wynik.toFixed(0) : "";
-        var etykieta = d.sygnal && d.sygnal.etykieta ? d.sygnal.etykieta.toLowerCase() : "";
-        miejsce.innerHTML = "Migawka danych z sesji <strong>" + dzien + "</strong>" + (etykieta ? ": sygnał rynku <strong>" + etykieta + "</strong> (" + wynik + " w skali od -100 do +100)." : ".");
-        miejsce.hidden = false;
-      })
-      .catch(function () { /* brak pliku z danymi: strona startowa działa bez tej informacji */ });
+    function json(adres) {
+      return fetch(adres, { cache: "no-cache" }).then(function (odp) { return odp.ok ? odp.json() : Promise.reject(new Error("HTTP " + odp.status)); });
+    }
+    function polskaData(napis) { return String(napis).slice(0, 10).split("-").reverse().join("."); }
+    Promise.all([json("data/stan-rynku/stan.json").catch(function () { return null; }), json("data/przyklad/indeks.json").catch(function () { return null; })])
+      .then(function (wyniki) {
+        var d = wyniki[0], probka = wyniki[1], tekst = "";
+        if (d && d.sesja) {
+          var wynik = d.sygnal && typeof d.sygnal.wynik === "number" ? (d.sygnal.wynik > 0 ? "+" : "") + d.sygnal.wynik.toFixed(0) : "";
+          var etykieta = d.sygnal && d.sygnal.etykieta ? d.sygnal.etykieta.toLowerCase() : "";
+          tekst = "Stan rynku: migawka danych z sesji <strong>" + polskaData(d.sesja) + "</strong>" + (etykieta ? ", sygnał rynku <strong>" + etykieta + "</strong> (" + wynik + " w skali od -100 do +100)." : ".");
+        }
+        if (probka && probka.pobrano) tekst += (tekst ? " " : "") + "Pozycja i VaR: próbka notowań i opcji z dnia <strong>" + polskaData(probka.pobrano) + "</strong>.";
+        if (tekst) { miejsce.innerHTML = tekst; miejsce.hidden = false; }
+      });
   })();
 </script>
 </body>

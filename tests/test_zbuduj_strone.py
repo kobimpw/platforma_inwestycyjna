@@ -17,12 +17,15 @@ def test_strona_sklada_sie_i_ma_wszystkie_wymagane_pliki(tmp_path):
     assert wynik["plikow"] > 10 and wynik["rozmiar_kb"] > 0
 
 
-def test_do_strony_trafiaja_tylko_dwa_pliki_danych(tmp_path):
-    """Archiwa pomocnicze (put/call, opcje SPX, historia) służą SQL i skryptowi aktualizującemu, a nie przeglądarce."""
+def test_do_strony_trafiaja_tylko_dozwolone_pliki_danych(tmp_path, korzen):
+    """Archiwa pomocnicze (put/call, opcje SPX, historia) służą SQL i skryptowi aktualizującemu, a nie przeglądarce.
+
+    Poza dwoma plikami Stanu rynku idą tylko próbki .json z katalogów wymienionych w DANE_KATALOGI_DLA_STRONY."""
     zs.zbuduj(tmp_path / "_site")
     dane = tmp_path / "_site" / "data"
     opublikowane = sorted(str(p.relative_to(dane)) for p in dane.rglob("*") if p.is_file())
-    assert opublikowane == sorted(zs.DANE_DLA_STRONY)
+    probki = [f"{k}/{p.name}" for k in zs.DANE_KATALOGI_DLA_STRONY for p in (korzen / "data" / k).glob("*.json")]
+    assert opublikowane == sorted([*zs.DANE_DLA_STRONY, *probki])
 
 
 def test_w_stronie_nie_ma_kodu_pythona_baz_ani_nagran(tmp_path):
@@ -53,6 +56,18 @@ def test_budowa_odrzuca_niedozwolony_typ_pliku(tmp_path):
     (web / "karta" / "nagranie.mp3").write_bytes(b"x")
     with pytest.raises(RuntimeError, match="niedozwolony typ pliku"):
         zs.zbuduj(tmp_path / "_site", web=web, dane=tmp_path / "data")
+
+
+def test_budowa_zglasza_brak_probek_dla_kart(tmp_path):
+    web = tmp_path / "web"
+    web.mkdir()
+    (web / "index.html").write_text("<html></html>", encoding="utf-8")
+    dane = tmp_path / "data"
+    for wzgledna in zs.DANE_DLA_STRONY:
+        (dane / wzgledna).parent.mkdir(parents=True, exist_ok=True)
+        (dane / wzgledna).write_text("{}", encoding="utf-8")
+    with pytest.raises(RuntimeError, match="brak plików .json w data/przyklad"):
+        zs.zbuduj(tmp_path / "_site", web=web, dane=dane)
 
 
 def test_budowa_zglasza_brak_pliku_danych(tmp_path):

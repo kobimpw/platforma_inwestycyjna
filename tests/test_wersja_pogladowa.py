@@ -14,11 +14,11 @@ TEKST = {".py", ".js", ".mjs", ".cjs", ".md", ".yml", ".yaml", ".toml", ".json",
 KORZEN_DOZWOLONY = {".claude", ".editorconfig", ".gitattributes", ".github", ".gitignore", ".python-version", "LICENSE", "Makefile",
                     "README.md", "data", "docs", "projekty", "pyproject.toml", "requirements-dev.txt", "requirements-tools.txt",
                     "requirements.txt", "sql", "src", "tests", "web"}
-DANE_DOZWOLONE = {"README.md", "stan-rynku", "historia"}
+DANE_DOZWOLONE = {"README.md", "stan-rynku", "historia", "przyklad"}
 PROJEKTY_DOZWOLONE = {"037-nowa-karta-stan-rynku"}
 
 NIEDOZWOLONE_ROZSZERZENIA = {".webm", ".mp3", ".m4a", ".mp4", ".wav", ".mov", ".pdf", ".sqlite", ".db", ".ipynb", ".zip", ".xlsx", ".docx"}
-LIMIT_ROZMIARU = 1_500_000      # bajty; największy dozwolony plik to dane karty Stan rynku (ok. 0,3 MB)
+LIMIT_ROZMIARU = 1_500_000      # bajty; największe pliki to próbka łańcucha opcji (ok. 0,7 MB) i biblioteka wykresów (ok. 0,2 MB)
 
 # Adresy e-mail dozwolone w treści: ślady asystenta i adresy zastępcze GitHuba (bez adresów prywatnych).
 EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
@@ -102,10 +102,18 @@ def test_w_tresci_nie_ma_zakazanych_nazw(korzen):
     assert zle == [], "zakazane nazwy w repozytorium:\n  " + "\n  ".join(zle[:10])
 
 
-def test_nie_ma_wartosci_pozycji_zapisanych_w_kodzie_ani_w_ustawieniach(korzen):
-    """Liczba jednostek i cena kupna to dane finansowe użytkownika: w kodzie mają być zerowe, a pliku ustawień ma nie być."""
+# Liczba jednostek i cena kupna w profilach demonstracyjnych karty Pozycja: okrągłe liczby, jawnie fikcyjne.
+PRZYKLADOWE_WARTOSCI_POZYCJI = {"ilosc": {0, 100}, "cenaKupna": {0, 700, 770}}
+
+
+def test_wartosci_pozycji_w_kodzie_sa_zerowe_albo_przykladowe_i_nie_ma_pliku_ustawien(korzen):
+    """Liczba jednostek i cena kupna to dane finansowe użytkownika. W kodzie wolno mieć tylko zera i okrągłe, fikcyjne
+    wartości profili demonstracyjnych z listy wyżej; każda inna liczba przy tych polach zatrzymuje test, żeby nie wróciła
+    prawdziwa pozycja. Pliku ustawień z profilami w repozytorium też nie ma."""
     zle = [p for p in _sledzone(korzen) if p.startswith("ustawienia/")]
     for plik, tekst in _teksty(korzen):
         zle += [f"{plik}: {m.group(0)}" for m in re.finditer(r'id="f-(?:ilosc-akcji|cena-kupna)"[^>]*value="[1-9]', tekst)]
-        zle += [f"{plik}: {m.group(0)}" for m in re.finditer(r'"(?:ilosc|cenaKupna)"\s*:\s*[1-9]', tekst)]
+        for m in re.finditer(r"""["']?(ilosc|cenaKupna)["']?\s*:\s*(\d+(?:\.\d+)?)\b""", tekst):
+            if float(m.group(2)) not in PRZYKLADOWE_WARTOSCI_POZYCJI[m.group(1)]:
+                zle.append(f"{plik}: {m.group(0)}")
     assert zle == []

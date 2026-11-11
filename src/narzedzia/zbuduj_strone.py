@@ -8,6 +8,7 @@ lokalnym podglądzie (`make serve`):
 
   _site/                    zawartość `web/`: strona startowa, karty, wspólne moduły, style
   _site/data/stan-rynku/    tylko dwa pliki, które czyta przeglądarka: stan.json i ocena.json
+  _site/data/przyklad/      próbki notowań i opcji dla kart VaR i Pozycja (pliki .json z data/przyklad/)
   _site/.nojekyll           wyłącza przetwarzanie Jekyllem (GitHub publikuje pliki bez zmian)
 
 Zasada: do strony trafia wyłącznie to, co jest na liście dozwolonych plików poniżej, a nie „wszystko poza wyjątkami",
@@ -28,14 +29,17 @@ DOMYSLNE_WYJSCIE = KORZEN / "_site"
 # Pliki danych czytane przez przeglądarkę (ścieżki względem data/). Archiwa pomocnicze (put/call, opcje SPX, historia)
 # służą warstwie SQL i skryptowi aktualizującemu, a strony ich nie potrzebują, więc nie są publikowane.
 DANE_DLA_STRONY = ("stan-rynku/stan.json", "stan-rynku/ocena.json")
+# Katalogi, z których do strony idą wszystkie pliki .json (próbki dla VaR i Pozycji powstają poleceniem `make probki`).
+DANE_KATALOGI_DLA_STRONY = ("przyklad",)
 
 # Dozwolone typy plików w web/: kod i styl strony, dane i obrazy. Inny typ zatrzymuje budowę, żeby nikt nie opublikował
 # czegoś (np. nagrania albo arkusza) bez świadomej zmiany tej listy.
 ROZSZERZENIA_WEB = {".html", ".js", ".css", ".json", ".png", ".svg", ".ico", ".txt", ".webmanifest"}
 
 # Co musi być w gotowej stronie, żeby wejście z README nie kończyło się pustym ekranem.
-WYMAGANE = ("index.html", "404.html", "stan-rynku/index.html", "biblioteka/index.html", "style.css", "shared/sidebar.js",
-            "data/stan-rynku/stan.json", "data/stan-rynku/ocena.json")
+WYMAGANE = ("index.html", "404.html", "stan-rynku/index.html", "biblioteka/index.html", "pozycja/index.html", "VaR/index.html",
+            "style.css", "shared/sidebar.js", "shared/probka.js", "shared/vendor/lightweight-charts.standalone.production.js",
+            "data/stan-rynku/stan.json", "data/stan-rynku/ocena.json", "data/przyklad/indeks.json")
 
 
 def zbuduj(wyjscie: Path = DOMYSLNE_WYJSCIE, web: Path = WEB, dane: Path = DANE) -> dict:
@@ -63,6 +67,16 @@ def zbuduj(wyjscie: Path = DOMYSLNE_WYJSCIE, web: Path = WEB, dane: Path = DANE)
         cel.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(zrodlo, cel)
         liczba += 1
+
+    for katalog in DANE_KATALOGI_DLA_STRONY:
+        pliki = sorted((dane / katalog).glob("*.json"))
+        if not pliki:
+            raise RuntimeError(f"brak plików .json w data/{katalog}/ (dla strony)")
+        for zrodlo in pliki:
+            cel = wyjscie / "data" / katalog / zrodlo.name
+            cel.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(zrodlo, cel)
+            liczba += 1
 
     (wyjscie / ".nojekyll").write_text("", encoding="utf-8")
 

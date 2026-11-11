@@ -5,12 +5,16 @@ prywatna. Ten plik zbiera konwencje, według których powstawał kod, w zakresie
 
 ## Zakres wersji poglądowej (najważniejsze)
 
-- W repozytorium są dwie karty (Stan rynku i Biblioteka), warstwa SQL, testy, CI i budowa statycznej strony. Nie dodawaj
-  tu kart, danych ani plików z pełnej platformy bez wyraźnej prośby właściciela.
+- W repozytorium są cztery karty (Stan rynku, Pozycja, VaR i Biblioteka), warstwa SQL, testy, CI i budowa statycznej strony.
+  Pozycja i VaR liczą na zapisanych próbkach notowań i opcji (`data/przyklad/`, patrz sekcja niżej). Nie dodawaj tu kart
+  (w tym rodziny Social: Social, Earnings, ETF sektorowe, News, Youtube), danych ani plików z pełnej platformy bez
+  wyraźnej prośby właściciela.
 - Repozytorium jest **publiczne**. Nie wpisuj w żaden plik kluczy dostępu, haseł, adresów e-mail, adresów prywatnych usług,
   pozycji i cen kupna, nagrań ani treści osób trzecich (artykułów, transkrypcji). Część tych zasad pilnuje test
   `tests/test_wersja_pogladowa.py`, ale nie zastępuje on myślenia.
 - Dane w `data/` to migawka z jednej sesji. Nie opisuj ich jako odświeżanych na żywo.
+- Liczba jednostek i cena kupna w profilach przykładowych karty Pozycja są **fikcyjne**. Nie wpisuj tu prawdziwych
+  pozycji autora; test `tests/test_wersja_pogladowa.py` dopuszcza przy tych polach tylko zera i wartości z jawnej listy.
 
 ## Zakaz długiej kreski (pauzy) w tekstach dla użytkownika
 
@@ -38,7 +42,7 @@ Nie dotyczy to komunikatów commitów ani komentarzy w kodzie: tam zwięzłość
 |---|---|
 | `src/` | kod Pythona: generatory kart (`src/<karta>/<karta>.py`), narzędzia (`src/narzedzia/`), warstwa SQL (`src/baza/`) |
 | `web/` | strona: HTML, CSS, JS; `index.html` i `app.js` kart są GENEROWANE z `src/`, nie edytuje się ich ręcznie |
-| `data/` | migawka danych karty Stan rynku, słownik w `data/README.md` |
+| `data/` | migawka danych karty Stan rynku, próbki notowań i opcji dla Pozycji i VaR (`przyklad/`), słownik w `data/README.md` |
 | `sql/` | schemat i widoki bazy SQLite, budowanej z `data/` poleceniem `make db` (plik bazy nie trafia do repo) |
 | `tests/` | testy (`make test`): rachunki, kontrakty danych, spójność ścieżek, regeneracja kart, straż publicznego repo |
 | `docs/` | dokumentacja: `docs/PRZEWODNIK.md`, wpisy biblioteki, instrukcja oceny dnia |
@@ -69,6 +73,23 @@ z niego `index.html` i `app.js`. Tych dwóch plików nigdy nie edytuje się ręc
    tylko orkiestratory (po jednym na każdy wizualny element strony) razem z ich `HTML_FRAGMENT_X` i `APP_JS_X`.
 3. **Nowy element to nowy, niezależny fragment.** Nie modyfikuj istniejącego kodu przy dodawaniu kolejnego elementu:
    buduj osobny blok i łącz go z resztą wyłącznie w `generuj()`.
+
+## Próbki danych rynkowych dla kart Pozycja i VaR
+
+W pełnej platformie te karty pytają własny serwer pośredniczący o notowania Yahoo Finance i łańcuch opcji Cboe, bo źródła
+nie dopuszczają zapytań wprost z przeglądarki (brak nagłówków CORS). Wersja poglądowa serwera nie ma, więc:
+
+1. `web/shared/probka.js` (globalny `PROBKA`) odpowiada na te same ścieżki, `/quote?ticker=...&range=...` i
+   `/options?symbol=...`, zapisanymi plikami z `data/przyklad/` w kształcie odpowiedzi źródeł. Stałe `WORKER_URL` (VaR) i
+   `PZ_WORKER` (Pozycja) w generatorach są puste; wpisanie adresu serwera przełączyłoby karty na dane na żywo.
+2. Próbki pobiera `make probki` (`src/narzedzia/pobierz_probki.py`, tylko biblioteka standardowa, wymaga internetu). Łańcuch
+   opcji jest przycinany (reguła w skrypcie i w `data/przyklad/indeks.json`), żeby pliki zostały małe; test pilnuje limitu
+   rozmiaru. Próbka jest zamrożona w czasie: karty liczą dni do wygaśnięcia od dnia próbki, nie od dzisiaj.
+3. Po odświeżeniu próbek sprawdź w `src/pozycja/pozycja.py` fikcyjne ceny kupna profili (`cenaKupna`): pozycja ma być lekko
+   pod wodą, inaczej generator stawia spready tuż przy cenie indeksu i karta nie ma żadnych propozycji. Zmieniając te
+   liczby, popraw też listę dozwolonych wartości w `tests/test_wersja_pogladowa.py` i daty w `README.md` oraz `data/README.md`.
+4. Biblioteka wykresów (TradingView Lightweight Charts) leży w `web/shared/vendor/` razem z licencją. Nie ładuj jej z CDN:
+   strona ma działać bez zewnętrznych zapytań.
 
 ## Interfejs: styl terminala, motyw, numerki bloków
 

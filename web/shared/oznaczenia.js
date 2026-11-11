@@ -65,7 +65,7 @@ function zbierzBlokiDoOznaczenia(main) {
 // Rozpoznanie karty (do przypinania uwag): katalog strony w docs/.
 // ---------------------------------------------------------------------------
 const OZNACZENIA_KARTY = [
-  "biblioteka", "stan-rynku",
+  "biblioteka", "pozycja", "stan-rynku", "VaR",
 ];
 
 function rozpoznajKarte() {

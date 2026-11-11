@@ -49,8 +49,11 @@ const IKONY = {
 
 const STRONY = [
   { href: "", etykieta: "Start", ikona: "dom" },
-  // Statystyczny stan rynku: makro, rynek i technika w jednym sygnale (zadanie 037).
+  // Pozycja i VaR liczą na zapisanych próbkach notowań i opcji (web/shared/probka.js), a nie na danych na żywo.
+  { href: "pozycja/", etykieta: "Pozycja", ikona: "teczka" },
+  // Statystyczny stan rynku: makro, rynek i technika w jednym sygnale.
   { href: "stan-rynku/", etykieta: "Stan rynku", ikona: "barometr" },
+  { href: "VaR/", etykieta: "VaR", ikona: "tarcza" },
   { href: "biblioteka/", etykieta: "Biblioteka", ikona: "ksiazki" },
 ];
 

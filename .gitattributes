@@ -5,4 +5,11 @@ web/biblioteka/index.html linguist-generated=true
 web/biblioteka/app.js linguist-generated=true
 web/stan-rynku/index.html linguist-generated=true
 web/stan-rynku/app.js linguist-generated=true
+web/pozycja/index.html linguist-generated=true
+web/pozycja/app.js linguist-generated=true
+web/VaR/index.html linguist-generated=true
+web/VaR/app.js linguist-generated=true
 web/shared/mapa-kodu.json linguist-generated=true
+# Biblioteka cudza (kopia pliku z pakietu npm) i próbki danych: nie liczą się do statystyk języków i zwijają się w podglądzie zmian.
+web/shared/vendor/** linguist-vendored=true
+data/przyklad/*.json linguist-generated=true

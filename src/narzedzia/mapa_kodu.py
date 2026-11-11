@@ -49,7 +49,9 @@ WYJSCIE = WEB / "shared" / "mapa-kodu.json"
 # `blizniak` = pythonowy wzorzec rachunku, którego strona nie uruchamia.
 KARTY = {
     "biblioteka": {"html": "biblioteka/index.html", "js": "biblioteka/app.js", "gen": "biblioteka/biblioteka.py", "blizniak": None},
+    "pozycja": {"html": "pozycja/index.html", "js": "pozycja/app.js", "gen": "pozycja/pozycja.py", "blizniak": None},
     "stan-rynku": {"html": "stan-rynku/index.html", "js": "stan-rynku/app.js", "gen": "stan_rynku/stan_rynku.py", "blizniak": None},
+    "VaR": {"html": "VaR/index.html", "js": "VaR/app.js", "gen": "var/var.py", "blizniak": None},
 }
 
 MAX_LINII_FRAGMENTU = 70          # dłuższy fragment jest przycinany w mapie

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pozycja</title>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body id="pg-pozycja" class="t-strona">
+<script>window.SIDEBAR_ROOT = "../";</script>
+<script src="../shared/sidebar.js"></script>
+<script src="../shared/oznaczenia.js"></script>
+<script src="../shared/probka.js"></script>
+<script src="../shared/projekty.js"></script>
+<script src="../shared/ustawienia.js"></script>
+<script src="../shared/przestrzen.js"></script>
+<main>
+  <div id="pz-przestrzen" class="prz-karta">
+    <div class="prz-przestrzen"></div>
+    <div class="prz-magazyn" hidden>
+      <section class="karta t-okno t-k4 pz-okno-pozycja">
+        <header class="t-naglowek"><h2>Pozycja</h2><div class="t-akcje"><button id="pz-odswiez" class="t-mini" type="button" title="Pobierz od nowa łańcuch opcji z CBOE oraz ceny ETF i indeksu z Yahoo (w wersji poglądowej: wczytaj ponownie zapisaną próbkę)">Odśwież</button></div></header>
+        <div class="t-tresc">
+          <div id="pz-profile" class="pz-profile" role="tablist" aria-label="Profile pozycji"></div>
+          <div id="pz-podsumowanie" class="pz-podsumowanie"></div>
+          <details id="pz-parametry" class="pz-parametry">
+            <summary>Parametry profilu</summary>
+            <div id="pz-formularz" class="pz-formularz"></div>
+            <div class="pz-profil-akcje"><button id="pz-usun-profil" class="t-mini" type="button" title="Usuń bieżący profil (zostaje co najmniej jeden)">Usuń profil</button></div>
+          </details>
+          <div id="pz-token" class="pz-token" hidden>
+            <input id="pz-token-pole" type="password" placeholder="token GitHub" autocomplete="off" />
+            <button id="pz-token-zapisz" class="t-mini" type="button" title="Token zostaje w tej przeglądarce; dzięki niemu profile i zakłady zapisują się w repozytorium">Zapisz token</button>
+          </div>
+          <p id="pz-stan" class="pz-stan"></p>
+          <p id="pz-zapis" class="pz-stan"></p>
+        </div>
+      </section>
+
+      <section class="karta t-okno t-k8 t-naroznik pz-okno-wskazniki">
+        <header class="t-naglowek"><h2>Wskaźniki rynku opcji</h2><div class="t-akcje"><span class="t-pomoc" title="Kolor kafelka: zielony sprzyja sprzedaży bear call spreadu przy trzymanym ETF, żółty to sygnał ostrzegawczy, czerwony nie sprzyja, szary to informacja bez oceny. Najedź na kafelek, żeby zobaczyć, jak liczony jest wskaźnik i jak go czytać.">?</span></div></header>
+        <div class="t-tresc">
+          <div id="pz-barometr" class="pz-barometr"></div>
+          <div id="pz-wskazniki" class="pz-wskazniki"></div>
+        </div>
+      </section>
+
+      <section class="karta t-okno t-k7 pz-okno-propozycje">
+        <header class="t-naglowek"><h2>Propozycje zakładów</h2><div class="t-akcje"><span class="t-pomoc" title="Kandydaci to zakłady z generatora o terminie 7–60 dni, z dodatnią premią, ze strike'iem sprzedanym nad indeksem i z P przebicia do 35%. Ocena 0–10: do 5 punktów EV z arkusza i po punkcie za płynność, premię po cenach rynkowych, strike na ścianie call, strike poza ruchem 1σ i termin 14–45 dni.">?</span></div></header>
+        <div class="t-tresc">
+          <div id="pz-propozycje" class="pz-propozycje"></div>
+        </div>
+      </section>
+
+      <section class="karta t-okno t-k5 pz-okno-wykres">
+        <header class="t-naglowek"><h2>Wykres wypłaty</h2><div class="t-akcje"><span id="pz-wykres-zaklad" class="pz-czas"></span><span class="t-pomoc" title="Wynik na dzień wygaśnięcia w zależności od poziomu indeksu. Górny panel: sam ETF (względem ceny kupna) i cała pozycja razem ze spreadem. Dolny panel: sam spread (premia minus wypłata dla kupującego). Pionowe linie: ciągła to indeks dziś, kreskowane to strike'i, kropkowana to próg rentowności spreadu; szare tło to zakres ±1σ do wygaśnięcia.">?</span></div></header>
+        <div class="t-tresc">
+          <div id="pz-wykres" class="pz-wykres"></div>
+          <div id="pz-wykres-legenda" class="pz-legenda"></div>
+        </div>
+      </section>
+
+      <section class="karta t-okno t-k8 pz-okno-zaklady">
+        <header class="t-naglowek"><h2>Wszystkie zakłady</h2><div class="t-akcje"><span id="pz-zaklady-licznik" class="pz-czas"></span></div></header>
+        <div class="pz-pasek">
+          <label title="Zestaw kolumn tabeli">Kolumny<select id="pz-t-zestaw"><option value="podstawowe">Podstawowe</option><option value="ev">EV</option><option value="plynnosc">Płynność</option></select></label>
+          <label title="Kandydaci: 7–60 dni, premia dodatnia, strike sprzedany nad indeksem, P przebicia do 35%">Pokaż<select id="pz-t-pokaz"><option value="wszystkie">wszystkie</option><option value="kandydaci">tylko kandydaci</option></select></label>
+          <label>Termin<select id="pz-t-termin"><option value="wszystkie">każdy</option><option value="do30">do 30 dni</option><option value="7-60">7–60 dni</option><option value="ponad60">ponad 60 dni</option></select></label>
+          <label title="Bezpieczny: para (górny strike progu, środek). Ryzykowny: para (środek, dolny strike progu).">Typ<select id="pz-t-typ"><option value="wszystkie">oba</option><option value="bezpieczny">bezpieczny</option><option value="ryzykowny">ryzykowny</option></select></label>
+        </div>
+        <div class="t-tresc t-tresc-tabela">
+          <table id="pz-tabela" class="pz-tabela"></table>
+        </div>
+      </section>
+
+      <section class="karta t-okno t-k4 pz-okno-otwarte">
+        <header class="t-naglowek"><h2>Otwarte pozycje</h2><div class="t-akcje"><button id="pz-otwarte-odswiez" class="t-mini" type="button" title="Wczytaj ponownie historię zakładów z repozytorium">Wczytaj</button></div></header>
+        <div class="t-tresc">
+          <div id="pz-otwarte" class="pz-otwarte"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

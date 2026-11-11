@@ -1,6 +1,7 @@
 name: CI, testy i kontrola kodu
 
-# Sprawdza kod po każdej zmianie: ruff (błędy w Pythonie), kontrola składni JavaScript i testy Pythona (pytest).
+# Sprawdza kod po każdej zmianie: ruff (błędy w Pythonie), kontrola składni JavaScript oraz testy Pythona (pytest)
+# i JavaScriptu (node --test, adapter próbek).
 # To samo robi lokalnie `make check`. Repozytorium jest publiczne, więc minuty Actions nie są tu ograniczeniem
 # i workflow działa przy każdym pushu i każdym pull requeście.
 on:
@@ -30,7 +31,7 @@ jobs:
           cache: pip
           cache-dependency-path: requirements*.txt
 
-      - name: Node 22 (kontrola składni JS)
+      - name: Node 22 (kontrola składni JS i testy adaptera)
         uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -41,5 +42,5 @@ jobs:
       - name: Kontrola kodu (ruff i składnia JavaScript)
         run: make lint
 
-      - name: Testy (pytest)
+      - name: Testy (pytest i node --test)
         run: make test
