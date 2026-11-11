@@ -1,0 +1,11 @@
+# Zależności potrzebne do uruchamiania skryptów i generatorów kart (Python 3.11).
+# Instaluje je lokalne środowisko i CI (`pip install -r requirements.txt`).
+#
+# Wersje są przypięte (==), żeby każdy przebieg dawał ten sam wynik. Zmieniaj je świadomie
+# i po przebiegu `make test`. numpy 2.4.x to ostatnia linia obsługująca Pythona 3.11
+# (numpy 2.5 wymaga 3.12), a całość działa na 3.11 (patrz .python-version).
+#
+# Narzędzie opcjonalne (pobieranie notowań w src/var/var.py) jest w requirements-tools.txt,
+# a testy i linter w requirements-dev.txt.
+pandas==3.1.1
+numpy==2.4.6

@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+# Statyczna strona składana do publikacji (make strona)
+_site/
+# Baza analityczna jest pochodna: budują ją `make db` i src/baza/baza.py z plików w data/
+data/*.sqlite
+data/*.sqlite-journal
+.pytest_cache/
+.ruff_cache/

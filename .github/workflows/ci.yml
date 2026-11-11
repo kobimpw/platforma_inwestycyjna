@@ -1,0 +1,45 @@
+name: CI, testy i kontrola kodu
+
+# Sprawdza kod po każdej zmianie: ruff (błędy w Pythonie), kontrola składni JavaScript i testy Pythona (pytest).
+# To samo robi lokalnie `make check`. Repozytorium jest publiczne, więc minuty Actions nie są tu ograniczeniem
+# i workflow działa przy każdym pushu i każdym pull requeście.
+on:
+  push: {}
+  pull_request: {}
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  testy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.11 (ta sama wersja, na której powstał kod)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements*.txt
+
+      - name: Node 22 (kontrola składni JS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Zależności
+        run: pip install -r requirements-dev.txt
+
+      - name: Kontrola kodu (ruff i składnia JavaScript)
+        run: make lint
+
+      - name: Testy (pytest)
+        run: make test

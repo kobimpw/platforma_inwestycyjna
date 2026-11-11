@@ -1,0 +1,8 @@
+# Pliki generowane z kodu Pythona (src/<karta>/<karta>.py, wzorzec jednoplikowy): GitHub nie liczy ich do
+# paska języków i zwija w podglądzie zmian. Nie edytuje się ich ręcznie, tylko generatory (`make build`).
+# Strona startowa (web/index.html) i wspólne moduły w web/shared/ są pisane ręcznie i liczą się do statystyk.
+web/biblioteka/index.html linguist-generated=true
+web/biblioteka/app.js linguist-generated=true
+web/stan-rynku/index.html linguist-generated=true
+web/stan-rynku/app.js linguist-generated=true
+web/shared/mapa-kodu.json linguist-generated=true

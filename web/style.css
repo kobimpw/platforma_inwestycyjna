@@ -1,0 +1,2934 @@
+/* Dwa motywy ustawiane przełącznikiem w pasku bocznym (web/shared/sidebar.js,
+   atrybut data-motyw na <html>), a bez wyboru — zgodnie z ustawieniem systemu:
+   - DZIEŃ (jasny): przygaszone jasnoszare tło strony, BIAŁE kafelki, prawie
+     czarny tekst i mocne obramowania — wysoki kontrast, żeby coś było widać przy
+     słońcu na ekranie. Matowe szarości zamiast czystej bieli tła ograniczają
+     odblask.
+   - NOC (ciemny): tło lekko rozjaśnione względem czystej czerni, kafelki z
+     grafitu ze srebrną krawędzią i delikatnym rozbłyskiem u góry, tekst
+     przygaszony (#dcdce1, nie biel) — kafelki odcinają się od tła, ale nic nie
+     świeci i nie męczy oczu po ciemku.
+   Obie palety trzeba utrzymywać razem: noc jest zapisana dwa razy (raz dla
+   systemu ciemnego bez ręcznego wyboru, raz dla ręcznego wyboru "Noc"). */
+:root,
+:root[data-motyw="dzien"] {
+  color-scheme: light;
+  --tlo: #f0f3fa;
+  --tlo-karty: #ffffff;
+  --tekst: #131722;
+  --tekst-slaby: #5d606b;
+  --linia: #e0e3eb;
+  --akcent: #2962ff;
+  --akcent-tekst: #ffffff;
+  --akcent-hover: #1e53e5;
+  --akcent-tlo: rgba(41, 98, 255, 0.12);
+  --blad: #d02739;
+  --dobrze: #067a68;
+  --ostrzezenie: #b86100;
+  --tlo-pola: #ffffff;
+  --tlo-wyciszone: #f8f9fd;
+  --linia-subtelna: #ebedf3;
+  --plytka: #ffffff;
+  --plytka-hover: #ffffff;
+  --plytka-obrys: #e0e3eb;
+  --plytka-cien: none;
+  --plytka-cien-hover: 0 0 0 1px rgba(41, 98, 255, 0.55);
+  --blok-kontur: rgba(19, 23, 34, 0.25);
+  --blok-kontur-hover: rgba(41, 98, 255, 0.85);
+  --blok-tlo-hover: rgba(41, 98, 255, 0.05);
+  --ozn-obwodka: #e0e3eb;
+  --ozn-niebieski: #2962ff;
+  --ozn-bursztyn: #e07a00;
+  --znacznik-colab: #b25000;
+  --znacznik-aistudio: #8944ab;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-motyw="dzien"]) {
+    color-scheme: dark;
+    --tlo: #131722;
+    --tlo-karty: #131722;
+    --tekst: #d1d4dc;
+    --tekst-slaby: #868993;
+    --linia: #2a2e39;
+    --akcent: #2962ff;
+    --akcent-tekst: #ffffff;
+    --akcent-hover: #4a7bff;
+    --akcent-tlo: rgba(41, 98, 255, 0.2);
+    --blad: #f23645;
+    --dobrze: #089981;
+    --ostrzezenie: #ff9800;
+    --tlo-pola: #1e222d;
+    --tlo-wyciszone: #1e222d;
+    --linia-subtelna: #262b38;
+    --plytka: #1e222d;
+    --plytka-hover: #222633;
+    --plytka-obrys: #2a2e39;
+    --plytka-cien: none;
+    --plytka-cien-hover: 0 0 0 1px rgba(41, 98, 255, 0.6);
+    --blok-kontur: rgba(209, 212, 220, 0.25);
+    --blok-kontur-hover: rgba(41, 98, 255, 0.9);
+    --blok-tlo-hover: rgba(255, 255, 255, 0.03);
+    --ozn-obwodka: #2a2e39;
+    --ozn-niebieski: #2962ff;
+    --ozn-bursztyn: #ff9800;
+    --znacznik-colab: #ffb340;
+    --znacznik-aistudio: #da8fff;
+  }
+}
+
+:root[data-motyw="noc"] {
+  color-scheme: dark;
+  --tlo: #131722;
+  --tlo-karty: #131722;
+  --tekst: #d1d4dc;
+  --tekst-slaby: #868993;
+  --linia: #2a2e39;
+  --akcent: #2962ff;
+  --akcent-tekst: #ffffff;
+  --akcent-hover: #4a7bff;
+  --akcent-tlo: rgba(41, 98, 255, 0.2);
+  --blad: #f23645;
+  --dobrze: #089981;
+  --ostrzezenie: #ff9800;
+  --tlo-pola: #1e222d;
+  --tlo-wyciszone: #1e222d;
+  --linia-subtelna: #262b38;
+  --plytka: #1e222d;
+  --plytka-hover: #222633;
+  --plytka-obrys: #2a2e39;
+  --plytka-cien: none;
+  --plytka-cien-hover: 0 0 0 1px rgba(41, 98, 255, 0.6);
+  --blok-kontur: rgba(209, 212, 220, 0.25);
+  --blok-kontur-hover: rgba(41, 98, 255, 0.9);
+  --blok-tlo-hover: rgba(255, 255, 255, 0.03);
+  --ozn-obwodka: #2a2e39;
+  --ozn-niebieski: #2962ff;
+  --ozn-bursztyn: #ff9800;
+  --znacznik-colab: #ffb340;
+  --znacznik-aistudio: #da8fff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--tlo);
+  color: var(--tekst);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+}
+
+
+
+
+
+/* Rozwijana grupa w pasku bocznym (web/shared/sidebar.js, np. „Research"). */
+
+
+main {
+  max-width: 960px;
+  min-width: 0;
+  flex: 1 1 auto;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+h1 { font-size: 22px; margin-bottom: 4px; }
+h2 { font-size: 15px; margin: 0 0 12px; }
+
+.opis {
+  color: var(--tekst-slaby);
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+.opis code {
+  background: var(--linia);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.karta {
+  background: var(--plytka);
+  border: 1px solid var(--plytka-obrys);
+  border-radius: 14px;
+  box-shadow: var(--plytka-cien);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+
+/* Podświetlenie bloku pod kursorem (web/shared/oznaczenia.js dokleja klasę
+   .blok-numerowany każdemu ponumerowanemu blokowi). Kafelek lekko jaśnieje i
+   dostaje niebieską obwódkę; blok bez własnej ramki (nagłówek, pasek
+   przycisków) ma stały, delikatny kontur i podświetla go dopiero po najechaniu. */
+.blok-numerowany {
+  transition: box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease, outline-color 0.18s ease;
+}
+.karta.blok-numerowany:hover {
+  background: var(--plytka-hover);
+  box-shadow: var(--plytka-cien-hover);
+}
+.blok-numerowany:not(.karta) {
+  outline: 1px dashed var(--blok-kontur);
+  outline-offset: 6px;
+  border-radius: 10px;
+}
+.blok-numerowany:not(.karta):hover {
+  outline: 2px solid var(--blok-kontur-hover);
+  background: var(--blok-tlo-hover);
+}
+
+/* Numerki bloków (web/shared/oznaczenia.js) — orientacyjne oznaczenie
+   każdego głównego elementu wizualnego na stronie, żeby dało się o niego
+   jednoznacznie zapytać przy zmianach wyglądu. Umyślnie wystaje w połowie
+   poza róg bloku, żeby nigdy nie zasłaniać treści w środku. Biała obwódka
+   sprawia, że numerek jest czytelny i na czarnym tle, i na srebrnym kafelku. */
+.oznaczenie-bloku {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--ozn-niebieski);
+  color: #ffffff;
+  border: 2px solid var(--ozn-obwodka);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+.siatka-formularza {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--tekst-slaby);
+}
+
+input, select {
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--linia);
+  background: var(--tlo-pola);
+  color: var(--tekst);
+}
+
+.pasek-akcji {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 20px;
+}
+
+button {
+  background: var(--akcent);
+  color: var(--akcent-tekst);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:disabled { opacity: 0.6; cursor: default; }
+
+.status { color: var(--tekst-slaby); font-size: 13px; }
+.status.blad { color: var(--blad); }
+
+.kontekst {
+  color: var(--tekst-slaby);
+  font-size: 13px;
+  margin-top: -4px;
+}
+
+.tabela-wrapper { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th, td {
+  text-align: right;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--linia);
+  white-space: nowrap;
+}
+th:first-child, td:first-child { text-align: left; }
+
+th {
+  color: var(--tekst-slaby);
+  font-weight: 600;
+}
+
+td.pusto {
+  text-align: center;
+  color: var(--tekst-slaby);
+  padding: 20px;
+}
+
+.lista-kanalow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.kanal-wiersz {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--tekst);
+}
+
+.wykres-tv-wrapper {
+  background: #131722;
+  border-radius: 10px;
+  padding: 10px 4px 4px;
+  margin-top: 12px;
+}
+#wykres-pole { min-height: 420px; }
+.wykres-blad {
+  color: #d1596b;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 10px 12px;
+}
+
+.tabela-wrapper-scroll {
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+/* Wykres kapitalizacji (earnings) — legenda pod kursorem + panel spółek dnia */
+.ea-opakowanie { position: relative; padding: 6px 6px 0; }
+#ea-wykres { min-height: 420px; }
+.ea-legenda {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+  font-size: 12px;
+  color: #d1d4dc;
+  background: rgba(19, 23, 34, 0.82);
+  border-radius: 4px;
+  padding: 5px 9px;
+  pointer-events: none;
+  line-height: 1.55;
+}
+.ea-legenda .data { color: #868993; margin-right: 10px; }
+.ea-legenda .drobne { color: #868993; font-size: 11px; }
+.ea-podpis { color: #868993; font-size: 11px; margin: 6px 10px 0; }
+.ea-spolki-naglowek { color: #d1d4dc; font-size: 12px; margin: 10px 10px 5px; }
+.ea-spolki-naglowek .dzien { font-weight: 600; }
+.ea-spolki-naglowek .drobne { color: #868993; }
+.ea-spolki-panel {
+  height: 210px;
+  overflow-y: auto;
+  margin: 0 6px 6px;
+  border-top: 1px solid #2a2e39;
+  padding-top: 6px;
+}
+.ea-spolki-panel table { border-collapse: collapse; width: 100%; font-size: 12px; color: #d1d4dc; }
+.ea-spolki-panel th {
+  color: #868993;
+  font-weight: 400;
+  text-align: left;
+  padding: 2px 8px 4px 2px;
+  border-bottom: 1px solid #2a2e39;
+  position: sticky;
+  top: 0;
+  background: #131722;
+}
+.ea-spolki-panel td { padding: 3px 8px 3px 2px; border-bottom: 1px solid #2a2e39; }
+.ea-spolki-panel td.symbol { font-weight: 600; white-space: nowrap; }
+.ea-spolki-panel td.nazwa {
+  color: #868993;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ea-spolki-panel td.liczba, .ea-spolki-panel th.liczba { text-align: right; white-space: nowrap; }
+.ea-spolki-panel td.pora { color: #868993; white-space: nowrap; }
+.ea-spolki-panel .pusto { color: #868993; font-size: 12px; padding: 6px 2px; }
+
+.podglad {
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 13px;
+  color: var(--tekst-slaby);
+  margin: 0;
+}
+
+/* Karta VaR — układ dwukolumnowy, przyciski zakresu, legenda obok wykresu, modal wzorów */
+
+.var-zakres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 4px;
+}
+.var-zakres-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--tlo-pola);
+  color: var(--tekst);
+  border: 1px solid var(--linia);
+  border-radius: 6px;
+}
+.var-zakres-btn.aktywny {
+  background: var(--akcent);
+  color: var(--akcent-tekst);
+  border-color: var(--akcent);
+}
+
+.var-wykres-rzad {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: stretch;
+}
+.var-wykres-rzad .wykres-tv-wrapper {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+.var-wykres-legenda {
+  flex: 0 0 170px;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 22px;
+}
+.var-legenda-wiersz {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+.var-legenda-probka {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex: 0 0 auto;
+  display: inline-block;
+}
+.var-legenda-pusto {
+  width: 13px;
+  flex: 0 0 auto;
+  display: inline-block;
+}
+.var-legenda-nazwa { color: var(--tekst); }
+.var-legenda-wartosc {
+  margin-left: auto;
+  color: var(--tekst-slaby);
+  font-variant-numeric: tabular-nums;
+}
+
+.var-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.var-modal[hidden] { display: none; }
+.var-modal-tlo {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+.var-modal-okno {
+  position: relative;
+  z-index: 1;
+  width: calc(100% - 40px);
+  max-width: 640px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--tlo-karty);
+  border: 1px solid var(--linia);
+  border-radius: 12px;
+  padding: 24px 28px;
+}
+.var-modal-x {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  padding: 4px 8px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--tekst-slaby);
+  cursor: pointer;
+}
+/* Karta News — strona dostaje własny, szerszy kontener (id na <body> w
+   strona karty News z pełnej platformy, poza <main> generowanym z news.py) niż domyślne
+   960px reszty kart, bo tabela + panel pełnej treści potrzebują więcej
+   miejsca w poziomie. */
+body#pg-news main {
+  max-width: 1760px;
+}
+
+/* Karta ETF sektorowe — jak wyżej: własny, szerszy kontener (id na <body> w
+   strona karty ETF sektorowe z pełnej platformy, poza <main> generowanym z etf-sektorowe.py). */
+body#pg-etf main {
+  max-width: 1760px;
+}
+
+/* Tabela newsów zawijająca tekst (bez poziomego suwaka) + mini sidebar
+   z pełną treścią obok tabeli, w tej samej karcie */
+.n-uklad-tabeli {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.n-tabela-otoczka { flex: 1 1 auto; min-width: 0; }
+
+#n-tabela-newsy { table-layout: fixed; width: 100%; }
+#n-tabela-newsy th,
+#n-tabela-newsy td {
+  white-space: normal;
+  overflow-wrap: break-word;
+  text-align: left;
+}
+/* Kolumna "data" (3. w colgroup) — szerokość na stałe w px, bez zawijania,
+   żeby np. "2026-09-15" zawsze mieściło się w jednym wierszu. */
+#n-tabela-newsy td:nth-child(3) { white-space: nowrap; }
+#n-tabela-newsy col.n-kol-kanal { width: 12%; }
+#n-tabela-newsy col.n-kol-tytul { width: 28%; }
+#n-tabela-newsy col.n-kol-data { width: 100px; }
+#n-tabela-newsy col.n-kol-skrot { width: 42%; }
+#n-tabela-newsy col.n-kol-pelna { width: 8%; }
+
+.n-btn-pelna {
+  background: transparent;
+  color: var(--akcent);
+  border: 1px solid var(--akcent);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.n-btn-pelna.n-aktywny { background: var(--akcent); color: var(--akcent-tekst); }
+
+.n-panel-tresc {
+  flex: 0 0 760px;
+  max-width: 800px;
+  max-height: min(780px, calc(100vh - 32px));
+  overflow-y: auto;
+  position: sticky;
+  top: 16px;
+  background: var(--tlo-pola);
+  border: 1px solid var(--linia);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.n-panel-puste { color: var(--tekst-slaby); margin: 0; }
+.n-panel-naglowek {
+  display: flex;
+  justify-content: space-between;
+  color: var(--tekst-slaby);
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+.n-panel-tytul { font-size: 16px; margin: 0 0 10px; }
+.n-panel-tytul a { color: var(--tekst); text-decoration: none; }
+.n-panel-tytul a:hover { text-decoration: underline; }
+.n-panel-tekst { white-space: pre-wrap; margin: 0; }
+
+/* Poniżej tego progu boczny panel (stała szerokość 760px, patrz .n-panel-tresc
+   wyżej) zgniatałby tabelę do nieczytelności zamiast się skurczyć — więc
+   układ przechodzi na jedną kolumnę (tabela, potem panel pod spodem). */
+@media (max-width: 1500px) {
+  .n-uklad-tabeli { flex-direction: column; }
+  .n-panel-tresc {
+    position: static;
+    flex: 1 1 auto;
+    max-width: none;
+    width: 100%;
+    max-height: 480px;
+  }
+}
+
+.var-wzory-tresc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--tekst);
+}
+
+/* Karta ETF sektorowe — tabela S&P 500 (sektor → branża → spółka) i przepływ
+   informacji (zadanie 018). Kolory wyłącznie ze zmiennych :root. */
+.sp-tresc { display: flex; flex-direction: column; gap: 6px; }
+.sp-pasek { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.sp-pasek input[type="search"] { flex: 1 1 160px; min-width: 120px; }
+.sp-status { font-size: 11px; color: var(--tekst-slaby); line-height: 1.4; }
+.sp-naglowki, .sp-wiersz {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) 86px 62px 66px 70px;
+  align-items: center;
+  gap: 6px;
+}
+.sp-naglowki {
+  font-size: 10px; font-weight: 600; color: var(--tekst-slaby); text-transform: uppercase;
+  padding: 2px 4px; border-bottom: 1px solid var(--linia);
+}
+.sp-naglowki span:not(:first-child), .sp-liczba { text-align: right; font-variant-numeric: tabular-nums; }
+.sp-drzewo { flex: 1 1 auto; min-height: 0; overflow: auto; font-size: 12px; }
+.sp-wiersz { padding: 2px 4px; border-bottom: 1px solid var(--linia-subtelna); }
+.sp-wiersz-spolka { cursor: pointer; }
+.sp-wiersz-spolka:hover { background: var(--akcent-tlo); }
+.sp-wiersz-grupa { background: var(--tlo-wyciszone); font-weight: 600; }
+.sp-poziom-2 > .sp-wiersz-grupa { background: transparent; font-weight: 600; padding-left: 14px; }
+.sp-poziom-2 .sp-wiersz-spolka { padding-left: 34px; }
+.sp-grupa.zwiniete > .sp-dzieci { display: none; }
+.sp-nazwa-komorka { display: flex; align-items: center; gap: 5px; min-width: 0; }
+.sp-nazwa { cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-licznik { color: var(--tekst-slaby); font-weight: 400; font-size: 11px; }
+.sp-strzalka { padding: 0 2px !important; background: none; border: 0; color: var(--tekst-slaby); font-size: 12px; cursor: pointer; }
+.sp-ticker { font-weight: 600; }
+.sp-firma { color: var(--tekst-slaby); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-lista { flex: 1 1 auto; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 6px; }
+body.t-strona .sp-pasek label { display: inline-flex; flex-direction: row; align-items: center; gap: 4px; font-size: 12px; margin: 0; }
+body.t-strona .sp-pasek input[type="checkbox"] { width: auto; margin: 0; }
+.sp-poz { border-bottom: 1px solid var(--linia-subtelna); padding: 4px 2px 6px; }
+.sp-poz-glowa { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.sp-data { font-size: 11px; color: var(--tekst-slaby); font-variant-numeric: tabular-nums; }
+.sp-plakietka { font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 3px; border: 1px solid var(--linia); background: var(--tlo-wyciszone); }
+.sp-tick { background: var(--akcent-tlo); }
+.sp-tytul { font-size: 12.5px; font-weight: 600; color: var(--tekst); text-decoration: none; flex: 1 1 220px; }
+.sp-tytul:hover { color: var(--akcent); text-decoration: underline; }
+.sp-poz-opis { font-size: 11.5px; color: var(--tekst-slaby); margin: 2px 0 2px 24px; line-height: 1.4; }
+.sp-poz-akcje { margin-left: 24px; }
+.sp-tresc-pelna {
+  margin: 6px 0 0 24px; padding: 8px; max-height: 320px; overflow: auto; white-space: pre-wrap;
+  font-family: inherit; font-size: 12px; line-height: 1.5; background: var(--tlo-pola); border: 1px solid var(--linia); border-radius: 3px;
+}
+.sp-wiecej { align-self: center; }
+.sp-kopiuj { font-weight: 700; }
+.sp-modal { position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center; }
+.sp-modal-ramka { background: var(--tlo-karty); border: 1px solid var(--linia); padding: 12px; width: min(900px, 94vw); display: flex; flex-direction: column; gap: 8px; }
+.sp-modal-tekst { height: 60vh; width: 100%; }
+@media (max-width: 900px) {
+  .sp-naglowki, .sp-wiersz { grid-template-columns: minmax(120px, 1fr) 70px 52px 56px; }
+  .sp-naglowki span:nth-child(5), .sp-wiersz > span:nth-child(5) { display: none; }
+}
+
+
+/* Zakładki okna „Zaznaczone spółki" (info / wykres świecowy / ceny / historia) */
+.sp-zakladki { display: flex; flex-wrap: wrap; gap: 2px; border-bottom: 1px solid var(--linia); }
+body.t-strona .t-tresc .sp-zakl {
+  padding: 4px 12px; font-size: 12px; border-radius: 3px 3px 0 0; background: transparent;
+  color: var(--tekst-slaby); border: 1px solid transparent; border-bottom: 0; cursor: pointer;
+}
+body.t-strona .t-tresc .sp-zakl.aktywna { background: var(--akcent-tlo); color: var(--tekst); border-color: var(--linia); font-weight: 600; }
+.sp-panel { display: flex; flex-direction: column; gap: 6px; flex: 1 1 auto; min-height: 0; overflow: auto; }
+.sp-panel[hidden] { display: none; }
+.sp-etykieta { font-size: 11px; color: var(--tekst-slaby); }
+body.t-strona .t-tresc .sp-zakres { padding: 2px 10px; font-size: 11px; background: var(--tlo-pola); color: var(--tekst); border: 1px solid var(--linia); border-radius: 3px; }
+body.t-strona .t-tresc .sp-zakres.aktywny { background: var(--akcent); color: var(--akcent-tekst); border-color: var(--akcent); }
+.sp-wykresy { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 8px; }
+.sp-wykres-kafel { border: 1px solid var(--linia); background: var(--tlo-karty); padding: 4px; min-width: 0; }
+.sp-wykres-tytul { font-size: 12px; margin-bottom: 2px; display: flex; flex-wrap: wrap; gap: 4px; align-items: baseline; }
+.sp-wykres-cena { margin-left: auto; font-variant-numeric: tabular-nums; }
+.sp-wykres-pole { width: 100%; min-width: 0; }
+.sp-h-wykres { min-height: 260px; }
+body.t-strona .sp-tabela td.etf-zwrot-plus { color: #089981; }
+body.t-strona .sp-tabela td.etf-zwrot-minus { color: #f23645; }
+.sp-tabela { width: 100%; border-collapse: collapse; font-size: 12px; }
+.sp-tabela th, .sp-tabela td { padding: 3px 6px; border-bottom: 1px solid var(--linia-subtelna); text-align: right; white-space: nowrap; }
+.sp-tabela th:first-child, .sp-tabela td:first-child { text-align: left; }
+.sp-tabela thead th { position: sticky; top: 0; background: var(--tlo-karty); font-size: 10px; text-transform: uppercase; color: var(--tekst-slaby); cursor: pointer; }
+
+/* ETF-y sektorów i branż: plakietki w tabeli S&P 500 i zakładka „ETF" */
+.sp-etf-miejsce { margin-left: auto; display: inline-flex; gap: 3px; flex-shrink: 0; }
+.sp-etf {
+  font-size: 10px; font-weight: 600; padding: 0 5px; border-radius: 3px; text-decoration: none; white-space: nowrap;
+  border: 1px solid var(--linia); color: var(--tekst); background: var(--tlo-pola);
+}
+.sp-etf-us { border-color: var(--akcent); }
+.sp-etf-ue { border-color: var(--ozn-bursztyn); }
+.sp-etf.z-sektora { opacity: 0.55; font-weight: 400; border-style: dashed; }
+.sp-etf:hover { background: var(--akcent-tlo); }
+.sp-etf-tabela td { vertical-align: top; white-space: normal; }
+.sp-etf-tabela .sp-e-nazwa { min-width: 150px; }
+.sp-e-poziom-0 .sp-e-nazwa, .sp-e-poziom-1 .sp-e-nazwa { font-weight: 700; }
+.sp-e-poziom-1 td { background: var(--tlo-wyciszone); }
+.sp-e-poziom-2 .sp-e-nazwa { padding-left: 18px; }
+.sp-etf-tabela tr.zmieniony .sp-e-nazwa::after { content: " ●"; color: var(--ozn-bursztyn); }
+.sp-e-gora { display: flex; align-items: center; gap: 4px; }
+body.t-strona .t-tresc input.sp-e-ticker { width: 92px; text-transform: uppercase; }
+body.t-strona .t-tresc input.sp-e-trafnosc { width: 52px; }
+.sp-e-link { text-decoration: none; color: var(--akcent); }
+.sp-e-link.z-sektora { opacity: 0.55; }
+.sp-e-opis { display: block; font-size: 10.5px; color: var(--tekst-slaby); max-width: 230px; }
+.sp-e-proc { font-size: 11px; color: var(--tekst-slaby); margin-left: 2px; }
+
+.etf-zwrot-plus { color: #089981; }
+.etf-zwrot-minus { color: #f23645; }
+
+/* Karta "Zajęcie pozycji" — ranking A1/A2/A6/A7/A8/A9 + historia zakładów,
+   wygląd gęstszy niż reszta strony, bliżej terminala giełdowego
+   (patrz specyfikacja karty w pełnej platformie, Część 2 punkt 12). Od
+   2026-10-02 kafelki mają wspólną, srebrną paletę jak pozostałe karty (wcześniej
+   cała strona miała tu stałe, ciemne tło). */
+body#pg-zajecie main {
+  max-width: 1760px;
+}
+
+/* Układ strony „Zajęcie pozycji": od zadania 016 to wspólna siatka okien w stylu
+   terminala (`.t-siatka`, patrz blok „Terminal"): u góry Parametry pozycji (z
+   przyciskiem Odśwież w nagłówku), Filtry i sortowanie, Progi ryzyka; niżej
+   wysokie okna Zakłady i Historia zakładów. Stary układ z grid-template-areas
+   (7 bloków jako dzieci <main>) został usunięty. */
+/* Tabele gęstsze (więcej kolumn na ekranie naraz) + liczby czcionką o stałej
+   szerokości, żeby kolumny cyfr równo się układały. */
+.zp-gesta th,
+.zp-gesta td {
+  padding: 4px 8px;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+}
+.zp-gesta th:first-child,
+.zp-gesta td:first-child {
+  font-family: inherit;
+}
+
+.zp-plus { color: #089981; }
+.zp-minus { color: #f23645; }
+
+/* Zakładki widoku tabeli zakładów („ogólne" / „EV"). */
+.zp-zakladki {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.zp-zakladka {
+  padding: 5px 14px;
+  font-size: 13px;
+  background: transparent;
+  color: var(--tekst-slaby);
+  border: 1px solid var(--linia);
+}
+.zp-zakladka.aktywna {
+  background: var(--akcent);
+  color: var(--akcent-tekst);
+  border-color: transparent;
+}
+
+/* Filtry dodawane samodzielnie: wiersz kolumna / operator / wartość / ×. */
+.zp-lista-filtrow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.zp-filtr {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) 64px minmax(0, 1fr) 32px;
+  gap: 6px;
+  align-items: center;
+}
+.zp-filtry-akcje { margin: 8px 0 14px; }
+.zp-btn-maly,
+.zp-filtr-usun {
+  padding: 5px 12px;
+  font-size: 13px;
+}
+.zp-filtr-usun { padding: 5px 0; }
+
+.zp-btn-otworz,
+.zp-btn-zamknij {
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.zp-token-ostrzezenie {
+  color: #f0b429;
+  font-size: 12px;
+  margin: 4px 0 12px;
+}
+.zp-token-info {
+  font-size: 13px;
+  color: var(--tekst-slaby);
+}
+
+.zp-zamkniecie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  white-space: normal;
+}
+.zp-zamkniecie input[type="date"] { width: 130px; }
+.zp-zamkniecie input[type="number"] { width: 90px; }
+
+/* ===========================================================================
+   Projekty i uwagi (karta z pełnej platformy, web/shared/oznaczenia.js)
+   Style karty zadania przeniesione z repo `organizator` (klasy z-*, t-podzadan*,
+   md-*, przycisk-*) oraz nowe: dymek przy numerkach (pu-dymek*), lista
+   zbiorcza (pu-*) i oznaczenia w prawym górnym rogu (oznaczenie-zakres/strony).
+   Kolory, których projekt nie ma w :root, są zdefiniowane lokalnie
+   (body.pu i .pu-dymek), żeby nie zmieniać wyglądu pozostałych kart.
+   =========================================================================== */
+/* Kolory pomocnicze (--tlo-pola, --akcent-tlo, --dobrze...) żyją teraz w :root na górze pliku. */
+body.pu [hidden], .pu-dymek [hidden] { display: none !important; }
+body.pu textarea {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--linia);
+  background: var(--tlo-pola);
+  color: var(--tekst);
+}
+body.pu a { color: var(--akcent); }
+/* Paski boczne mają własne kolory linków — nie dziedziczą niebieskiego z body.pu. */
+body.pu .sidebar a { color: var(--tekst); }
+body.pu .sidebar a.aktywna { color: var(--akcent-tekst); }
+body.pu .pasek-akcji { margin: 8px 0 4px; }
+body.pu .karta { margin-bottom: 16px; }
+body.pu button.przycisk-drugorzedny:not(:hover) { background: transparent; }
+body.pu button.przycisk-drugorzedny { padding: 6px 14px; font-weight: 500; }
+body.pu button.z-segment-opcja, body.pu button.z-skrot, body.pu button.z-ikona, body.pu button.z-link-przycisk { font-weight: 500; }
+
+/* Drugorzędny = obrys w kolorze akcentu, jak "Kup" na apple.com. */
+.przycisk-drugorzedny {
+  background: transparent;
+  color: var(--akcent);
+  border: 1px solid var(--akcent);
+}
+button.przycisk-drugorzedny:hover,
+.przycisk-drugorzedny:hover { background: var(--akcent-tlo); }
+/* Ten sam wygląd dla <label> (wybór pliku) i <a> (np. "Pobierz"). */
+.przycisk-drugorzedny:not(button) {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 980px;
+  padding: 8px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Usuwanie — szare i ciche, czerwone dopiero po najechaniu, żeby wzrok nie
+   trafiał najpierw w akcje destrukcyjne. */
+button.przycisk-usun {
+  background: transparent;
+  color: var(--tekst-slaby);
+  border: none;
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 400;
+}
+button.przycisk-usun:hover { color: var(--blad); background: transparent; }
+
+.status { color: var(--tekst-slaby); font-size: 13px; }
+.status.blad { color: var(--blad); }
+
+.t-podzadania {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0 0 0 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.t-podzadanie {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.t-podzadanie input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; flex: none; }
+.t-podzadanie-tresc.t-gotowe { text-decoration: line-through; color: var(--tekst-slaby); }
+.t-podzadanie-tresc { flex: 1 1 auto; }
+.t-pasek-male {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Karta zadania (pełna platforma, HTML_FRAGMENT_ZADANIE) — przestrzeń
+   pracy nad jednym zadaniem/projektem: duży opis w Markdown i dziennik w
+   głównej kolumnie, podzadania i materiały (pliki, linki do Docs/Colab/AI
+   Studio, arkusze Google) w wąskiej kolumnie bocznej. */
+.z-wstecz { margin: 0 0 12px; font-size: 14px; }
+.z-wstecz a { text-decoration: none; }
+.z-naglowek { margin-bottom: 20px; }
+.z-nazwa {
+  width: 100%;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  padding: 4px 8px;
+  margin-left: -8px;
+  border: 1px solid transparent;
+  background: transparent;
+}
+.z-nazwa:hover { border-color: var(--linia-subtelna); }
+.z-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.z-meta input { flex: 1 1 200px; max-width: 320px; }
+.z-meta select { flex: 0 1 200px; }
+
+.z-uklad {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 16px;
+  align-items: start;
+}
+.z-kolumna-glowna,
+.z-kolumna-boczna { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.z-blok { margin-bottom: 0; }
+.z-blok-naglowek {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.z-blok-naglowek h2 { margin: 0; flex: 1 1 auto; }
+.z-blok-stopka {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.z-pusto { margin: 0; font-size: 14px; }
+
+/* Przełącznik Edycja/Podgląd — "segmented control" jak w iOS. */
+.z-segment {
+  display: inline-flex;
+  background: var(--tlo-wyciszone);
+  border-radius: 9px;
+  padding: 2px;
+}
+.z-segment-opcja {
+  background: transparent;
+  color: var(--tekst);
+  border: none;
+  border-radius: 7px;
+  padding: 4px 12px;
+  font-size: 13px;
+}
+.z-segment-opcja:hover { background: transparent; }
+.z-segment-opcja.z-segment-aktywny {
+  background: var(--tlo-karty);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  font-weight: 600;
+}
+
+.z-opis-edytor {
+  width: 100%;
+  min-height: 260px;
+  resize: vertical;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.z-nowy-wpis,
+.z-wpis-edycja {
+  width: 100%;
+  min-height: 72px;
+  resize: vertical;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Wyrenderowany Markdown (opis, wpisy dziennika, podgląd plików .md). */
+.md-podglad { font-size: 16px; line-height: 1.6; overflow-wrap: anywhere; }
+.md-podglad > :first-child { margin-top: 0; }
+.md-podglad > :last-child { margin-bottom: 0; }
+.md-podglad h2 { font-size: 24px; letter-spacing: -0.015em; margin: 24px 0 8px; }
+.md-podglad h3 { font-size: 19px; margin: 20px 0 6px; }
+.md-podglad h4, .md-podglad h5, .md-podglad h6 { font-size: 16px; margin: 16px 0 4px; }
+.md-podglad p { margin: 0 0 12px; }
+.md-podglad ul, .md-podglad ol { margin: 0 0 12px; padding-left: 22px; }
+.md-podglad li { margin-bottom: 2px; }
+.md-podglad li.md-zadanie { list-style: none; margin-left: -20px; }
+.md-podglad .md-zrobione { text-decoration: line-through; color: var(--tekst-slaby); }
+.md-podglad blockquote {
+  margin: 0 0 12px;
+  padding: 2px 0 2px 14px;
+  border-left: 3px solid var(--linia);
+  color: var(--tekst-slaby);
+}
+.md-podglad code {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--tlo-wyciszone);
+  padding: 1px 5px;
+  border-radius: 5px;
+}
+.md-podglad pre {
+  background: var(--tlo-wyciszone);
+  border-radius: 10px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  margin: 0 0 12px;
+}
+.md-podglad pre code { background: none; padding: 0; }
+.md-podglad hr { border: none; border-top: 1px solid var(--linia-subtelna); margin: 18px 0; }
+#z-opis-podglad { min-height: 60px; cursor: text; }
+
+/* Dziennik — wpisy od najnowszego. */
+.z-dziennik { display: flex; flex-direction: column; margin-top: 16px; }
+.z-wpis { padding: 12px 0; border-top: 1px solid var(--linia-subtelna); }
+.z-wpis-gora { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+.z-wpis-czas { flex: 1 1 auto; font-size: 12px; color: var(--tekst-slaby); }
+.z-wpis-tresc { font-size: 15px; }
+.z-wpis .z-wiersz-dodaj { margin-top: 8px; }
+.z-ikona {
+  background: transparent;
+  color: var(--tekst-slaby);
+  border: none;
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-size: 14px;
+}
+.z-ikona:hover { background: transparent; color: var(--akcent); }
+
+/* Podzadania z paskiem postępu. */
+.z-licznik { font-size: 13px; color: var(--tekst-slaby); font-variant-numeric: tabular-nums; }
+.z-pasek-postepu {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--tlo-wyciszone);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+#z-pasek-postepu-wypelnienie {
+  height: 100%;
+  width: 0;
+  background: var(--dobrze);
+  transition: width 0.2s ease;
+}
+.z-blok .t-podzadania { padding-left: 0; margin: 0 0 10px; }
+.z-wiersz-dodaj { display: flex; gap: 8px; align-items: center; }
+.z-wiersz-dodaj input { flex: 1 1 auto; min-width: 0; }
+
+/* Materiały — jedna lista: linki (z typem) i pliki (z rozmiarem). */
+.z-materialy { display: flex; flex-direction: column; margin-bottom: 12px; }
+.z-material {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--linia-subtelna);
+  font-size: 14px;
+}
+.z-material:last-child { border-bottom: none; }
+.z-material-nazwa {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--tekst);
+}
+a.z-material-nazwa:hover { color: var(--akcent); }
+.z-link-przycisk {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: left;
+  color: var(--tekst);
+}
+.z-link-przycisk:hover { background: transparent; color: var(--akcent); }
+.z-material-meta { flex: none; font-size: 12px; color: var(--tekst-slaby); }
+.z-znacznik {
+  flex: none;
+  min-width: 44px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: var(--tlo-wyciszone);
+  color: var(--tekst-slaby);
+}
+.z-znacznik-docs { background: rgba(0, 113, 227, 0.14); color: var(--akcent); }
+.z-znacznik-sheets { background: rgba(36, 138, 61, 0.14); color: var(--dobrze); }
+.z-znacznik-slides { background: rgba(201, 52, 0, 0.14); color: var(--ostrzezenie); }
+.z-znacznik-colab { background: rgba(255, 159, 10, 0.18); color: var(--znacznik-colab); }
+.z-znacznik-aistudio { background: rgba(175, 82, 222, 0.16); color: var(--znacznik-aistudio); }
+.z-znacznik-md { background: var(--akcent-tlo); color: var(--akcent); }
+.z-materialy-akcje { display: flex; gap: 8px; flex-wrap: wrap; }
+.z-materialy-akcje > * { padding: 6px 14px; font-size: 14px; }
+.z-plik-etykieta { cursor: pointer; }
+.z-formularz-link { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.z-skroty {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  font-size: 13px;
+}
+.z-skroty-etykieta { color: var(--tekst-slaby); margin-right: 2px; }
+.z-skrot {
+  background: transparent;
+  color: var(--akcent);
+  border: none;
+  padding: 2px 6px;
+  font-size: 13px;
+}
+.z-skrot:hover { background: var(--akcent-tlo); }
+.z-blok .status:empty { display: none; }
+.z-blok .status { margin: 10px 0 0; }
+
+/* Podgląd pliku .md w oknie dialogowym. */
+.z-dialog {
+  width: min(760px, calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+  border: none;
+  border-radius: 18px;
+  padding: 24px;
+  background: var(--tlo-karty);
+  color: var(--tekst);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+.z-dialog::backdrop { background: rgba(0, 0, 0, 0.4); }
+.z-dialog-naglowek { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.z-dialog-naglowek h2 { flex: 1 1 auto; margin: 0; overflow-wrap: anywhere; }
+
+@media (max-width: 860px) {
+  .z-uklad { grid-template-columns: minmax(0, 1fr); }
+  .z-nazwa { font-size: 26px; }
+}
+
+/* Lista zbiorcza */
+.pu-sekcja { font-size: 13px; margin: 16px 0 6px; color: var(--tekst-slaby); font-weight: 600; }
+.pu-wiersz {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 4px;
+  border-top: 1px solid var(--linia-subtelna, var(--linia));
+}
+.pu-wiersz-tytul { flex: 1 1 auto; min-width: 0; text-decoration: none; color: var(--tekst); overflow-wrap: anywhere; }
+.pu-wiersz-tytul:hover { color: var(--akcent); }
+.pu-zrobione .pu-wiersz-tytul { text-decoration: line-through; color: var(--tekst-slaby); }
+.pu-plakietka {
+  flex: none;
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--akcent-tlo);
+  color: var(--tekst-slaby);
+  white-space: nowrap;
+}
+.pu-prio-1 { background: rgba(37, 99, 235, 0.14); color: var(--akcent); }
+.pu-prio-2 { background: rgba(255, 159, 10, 0.2); color: var(--ostrzezenie); }
+.pu-prio-3 { background: rgba(220, 38, 38, 0.16); color: var(--blad); }
+.pu-dymek-otworz { flex: none; text-decoration: none; font-size: 15px; padding: 0 4px; }
+
+/* Dymek z uwagami przy numerku bloku */
+.pu-dymek {
+  position: fixed;
+  z-index: 1000;
+  max-height: min(70vh, 480px);
+  overflow-y: auto;
+  padding: 12px 14px;
+  border: 1px solid var(--linia);
+  border-radius: 10px;
+  background: var(--tlo-karty);
+  color: var(--tekst);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  font-size: 13px;
+}
+.pu-dymek-gora { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+.pu-dymek-gora strong { flex: 1 1 auto; font-size: 13px; }
+.pu-dymek-wiersz { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 6px 0; border-top: 1px solid var(--linia); }
+.pu-dymek-nazwa { flex: 1 1 140px; min-width: 0; overflow-wrap: anywhere; }
+.pu-dymek-wiersz.pu-zrobione .pu-dymek-nazwa { text-decoration: line-through; color: var(--tekst-slaby); }
+.pu-dymek-info { color: var(--tekst-slaby); font-size: 12px; margin: 6px 0; }
+.pu-dymek-info.pu-blad { color: var(--blad); }
+.pu-dymek-formularz { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.pu-dymek-formularz select { flex: 1 1 100%; }
+.pu-dymek-formularz input { flex: 1 1 140px; min-width: 0; }
+.pu-dymek-formularz button { padding: 6px 12px; }
+
+/* Oznaczenia w prawym górnym rogu (litery) — patrz web/shared/oznaczenia.js */
+.oznaczenie-zakres, .oznaczenie-strony {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: var(--ozn-bursztyn);
+  color: #ffffff;
+  border: 2px solid var(--ozn-obwodka);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+.oznaczenie-strony { top: 4px; right: 4px; }
+.oznaczenie-bloku { pointer-events: auto; cursor: pointer; }
+/* Wiersz statusu zapisu ma stałą wysokość — inaczej pojawienie się tekstu
+   („Niezapisane zmiany…”) po zdjęciu fokusu z pola przesuwało przyciski w
+   dół i klik przechodził obok (np. przełącznik Edycja/Podgląd). */
+#z-zapis-status { min-height: 20px; margin: 6px 0 0; }
+
+/* Zakładki „Uwagi” / „Kod” w dymku przy numerku (web/shared/oznaczenia.js) */
+.pu-zakladki { display: flex; gap: 4px; margin-bottom: 10px; border-bottom: 1px solid var(--linia); }
+.pu-zakladka {
+  background: transparent;
+  color: var(--tekst-slaby);
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.pu-zakladka:hover { background: transparent; color: var(--tekst); }
+.pu-zakladka-aktywna { color: var(--akcent); border-bottom-color: var(--akcent); }
+.pu-kod-segment { border-top: 1px solid var(--linia); padding: 4px 0; }
+.pu-kod-segment > summary { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 4px 0; list-style-position: inside; }
+.pu-kod-nazwa { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: ui-monospace, monospace; font-size: 12px; }
+.pu-kod-linie { flex: none; color: var(--tekst-slaby); font-size: 11px; }
+.pu-kod-meta { font-size: 11px; color: var(--tekst-slaby); margin: 2px 0 6px; overflow-wrap: anywhere; }
+.pu-kod-edytuj { color: var(--akcent); font-weight: 600; }
+.pu-kod-segment pre {
+  margin: 0;
+  max-height: 240px;
+  overflow: auto;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--tlo-pola);
+  border: 1px solid var(--linia);
+  font-size: 11.5px;
+  line-height: 1.45;
+  tab-size: 2;
+}
+.pu-kod-przerwa { text-align: center; color: var(--tekst-slaby); font-size: 11px; padding: 2px 0; font-style: italic; }
+.pu-kod-pliki { margin-top: 10px; font-size: 12px; }
+.pu-kod-pliki summary { cursor: pointer; font-weight: 600; }
+.pu-kod-plik { padding: 2px 0 2px 14px; color: var(--tekst-slaby); overflow-wrap: anywhere; }
+.pu-rola-html { background: rgba(220, 38, 38, 0.16); color: #f87171; }
+.pu-rola-js { background: rgba(234, 179, 8, 0.18); color: #eab308; }
+.pu-rola-css { background: rgba(37, 99, 235, 0.16); color: #60a5fa; }
+
+/* Widoki tabeli zakładów: pasek zakładek, akcje, panel kolumn (APP_JS_WIDOKI). */
+.zp-widoki-pasek {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px 16px;
+  margin-bottom: 10px;
+}
+.zp-widoki-pasek .zp-zakladki { flex-wrap: wrap; margin-bottom: 0; }
+.zp-widoki-akcje { display: flex; flex-wrap: wrap; gap: 6px; }
+.zp-widok-panel {
+  border: 1px solid var(--linia);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.zp-widok-panel[hidden] { display: none; }
+.zp-widok-panel-wiersz { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.zp-widok-panel .zp-btn-maly { align-self: flex-start; }
+.zp-widok-grupa {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 4px 12px;
+  border: 1px solid var(--linia);
+  border-radius: 6px;
+  padding: 6px 10px 8px;
+}
+.zp-widok-grupa legend { padding: 0 6px; color: var(--tekst-slaby); font-size: 12px; }
+.zp-widok-grupa label { font-size: 13px; display: flex; align-items: center; gap: 4px; }
+
+/* Akcje przy opisie zadania: pobranie / zapis jako materiał .md. */
+.z-opis-akcje { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Typ wpisu „projekt" (złożony, z rozbudowanym opisem) — wyraźnie inny niż zwykłe zadanie. */
+.pu-typ-projekt { background: rgba(130, 80, 223, 0.2); color: #a678ff; font-weight: 600; letter-spacing: 0.04em; }
+.pu-wiersz-projekt { border-left: 3px solid #a678ff; padding-left: 8px; }
+.pu-wiersz-projekt .pu-wiersz-tytul { font-weight: 600; }
+.z-naglowek-projekt { border-left: 3px solid #a678ff; padding-left: 12px; }
+
+/* Przełącznik motywu Auto / Dzień / Noc w pasku bocznym (web/shared/sidebar.js). */
+
+/* ---- Karta „Biblioteka" (docs/biblioteka/) ------------------------------- */
+.bib-szukaj { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.bib-szukaj label { font-weight: 600; }
+.bib-szukaj input { flex: 1 1 240px; min-width: 0; }
+.bib-licznik { color: var(--tekst-slaby); font-size: 0.9em; }
+.bib-licznik-sekcji { color: var(--tekst-slaby); font-weight: 400; font-size: 0.8em; }
+.bib-wpis { border-top: 1px solid var(--linia-subtelna); }
+.bib-wpis:first-of-type { border-top: 0; }
+.bib-wpis summary {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  padding: 10px 2px; cursor: pointer; list-style: none;
+}
+.bib-wpis summary::-webkit-details-marker { display: none; }
+.bib-wpis summary::before { content: "▸"; color: var(--tekst-slaby); width: 1em; }
+.bib-wpis[open] summary::before { content: "▾"; }
+.bib-nazwa { font-weight: 600; font-size: 1.05em; }
+.bib-jezyk {
+  font-size: 0.78em; padding: 2px 9px; border-radius: 999px;
+  border: 1px solid var(--akcent); color: var(--akcent); background: var(--akcent-tlo);
+}
+.bib-tresc { padding: 2px 2px 14px; }
+.bib-tresc p { margin: 0 0 8px; line-height: 1.5; }
+.bib-plakietki { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.bib-status, .bib-kategoria {
+  font-size: 0.78em; padding: 2px 9px; border-radius: 999px;
+  border: 1px solid var(--linia); background: var(--tlo-wyciszone); color: var(--tekst-slaby);
+}
+.bib-status-uzycie { color: var(--dobrze); border-color: var(--dobrze); }
+.bib-status-historia { color: var(--ostrzezenie); border-color: var(--ostrzezenie); }
+.bib-status-plan { color: var(--akcent); border-color: var(--akcent); background: var(--akcent-tlo); }
+.bib-szczegoly {
+  display: grid; grid-template-columns: max-content 1fr; gap: 3px 12px;
+  margin: 10px 0 0; padding: 8px 12px; font-size: 0.88em;
+  background: var(--tlo-wyciszone); border-radius: 8px;
+}
+.bib-szczegoly dt { color: var(--tekst-slaby); }
+.bib-szczegoly dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 600px) { .bib-szczegoly { grid-template-columns: 1fr; } }
+
+/* ===========================================================================
+   Terminal (wspólny styl okien) — zadania 014 i 016.
+   Układ „jak w terminalu": strona to siatka okien sklejonych cienkimi liniami
+   (`.t-siatka` z oknami `.t-okno`), każde z wąskim nagłówkiem [numer] tytuł …
+   przyciski i gęstą typografią. Włącza go klasa `t-strona` na <body>.
+   Kolory wyłącznie ze zmiennych :root, więc działa w obu motywach (Dzień/Noc).
+   Okno ma też klasę `karta` (oznaczenia.js numeruje bloki po `.karta`) i klasę
+   szerokości `t-k3 … t-k12` (kolumny z 12), a siatka klasę `t-dol-wysoki`, gdy
+   drugi wiersz ma być wysoki i przewijany wewnątrz okien.
+   =========================================================================== */
+body.t-strona main { max-width: none; margin: 0; padding: 14px 16px 24px 8px; }
+
+.t-siatka {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--linia);
+  border: 1px solid var(--linia);
+  margin-bottom: 8px;
+}
+.t-siatka.t-dol-wysoki { grid-template-rows: auto minmax(360px, calc(100vh - 290px)); }
+.t-siatka.t-wysoki { grid-template-rows: minmax(360px, calc(100vh - 80px)); }
+body.t-strona .t-siatka > .t-okno {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  grid-column: span 12;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--tlo-karty);
+}
+body.t-strona .t-siatka > .t-okno.t-k3 { grid-column: span 3; }
+body.t-strona .t-siatka > .t-okno.t-k4 { grid-column: span 4; }
+body.t-strona .t-siatka > .t-okno.t-k5 { grid-column: span 5; }
+body.t-strona .t-siatka > .t-okno.t-k6 { grid-column: span 6; }
+body.t-strona .t-siatka > .t-okno.t-k7 { grid-column: span 7; }
+body.t-strona .t-siatka > .t-okno.t-k8 { grid-column: span 8; }
+body.t-strona .t-siatka > .t-okno.t-k12 { grid-column: span 12; }
+
+/* Podświetlenie po najechaniu: cienka obwódka zamiast cienia kafelka. */
+body.t-strona .t-siatka > .t-okno.blok-numerowany:hover {
+  box-shadow: none;
+  background: var(--tlo-karty);
+  outline: 1px solid var(--blok-kontur-hover);
+  outline-offset: -1px;
+}
+
+/* Nagłówek okna: [numer] tytuł … małe przyciski po prawej. */
+.t-naglowek {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  height: 24px;
+  padding: 0 6px 0 30px;
+  background: var(--tlo-wyciszone);
+  border-bottom: 1px solid var(--linia);
+}
+.t-naglowek h2 { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.02em; }
+.t-akcje { display: flex; align-items: center; gap: 4px; }
+/* W prawym górnym rogu siatki siedzą litery „S" i „A" z oznaczenia.js — okno w
+   tym rogu (klasa `t-naroznik`) zostawia im miejsce w nagłówku. */
+.t-naroznik .t-naglowek { padding-right: 34px; }
+.t-pomoc {
+  display: inline-block;
+  margin-left: 4px;
+  width: 14px;
+  height: 14px;
+  line-height: 13px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  border: 1px solid var(--linia);
+  border-radius: 50%;
+  color: var(--tekst-slaby);
+  cursor: help;
+}
+/* Numerek bloku wchodzi do paska nagłówka (zamiast wystawać poza róg). */
+body.t-strona .t-siatka > .t-okno > .oznaczenie-bloku {
+  top: 3px;
+  left: 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  font-size: 11px;
+  border-width: 1px;
+  box-shadow: none;
+}
+.t-tresc { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 8px; }
+.t-tresc-tabela { padding: 0; }
+
+/* Gęste kontrolki wewnątrz okien. */
+body.t-strona .t-tresc label { font-size: 11px; }
+body.t-strona .t-tresc input,
+body.t-strona .t-tresc select,
+body.t-strona .t-tresc textarea { font-size: 12px; padding: 3px 6px; border-radius: 2px; }
+body.t-strona .t-tresc textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--linia);
+  background: var(--tlo-pola);
+  color: var(--tekst);
+  font-family: inherit;
+  resize: vertical;
+}
+body.t-strona .t-tresc button { padding: 4px 12px; font-size: 12px; border-radius: 3px; }
+body.t-strona .t-tresc .pasek-akcji { margin: 8px 0 0; gap: 8px; flex-wrap: wrap; }
+body.t-strona .t-tresc .opis { font-size: 12px; margin: 0 0 8px; }
+body.t-strona .t-tresc h3 { font-size: 12px; margin: 8px 0 4px; }
+body.t-strona .t-tresc .siatka-formularza { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+.t-mini {
+  padding: 1px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  background: transparent;
+  color: var(--tekst);
+  border: 1px solid var(--linia);
+  border-radius: 2px;
+}
+.t-mini:hover { background: var(--akcent-tlo); }
+body.t-strona .t-akcje > button.t-mini { padding: 1px 8px; font-size: 11px; }
+
+/* Tabele: małe, równe, bez ozdób. */
+body.t-strona .t-okno table { width: 100%; border-collapse: collapse; font-size: 12px; }
+body.t-strona .t-okno th,
+body.t-strona .t-okno td {
+  padding: 2px 6px;
+  border: 0;
+  border-bottom: 1px solid var(--linia-subtelna);
+  border-radius: 0;
+  background: transparent;
+  color: var(--tekst);
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: break-word;
+  font-variant-numeric: tabular-nums;
+}
+body.t-strona .t-okno th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tekst-slaby);
+  background: var(--tlo-karty);
+  border-bottom: 1px solid var(--linia);
+  overflow-wrap: normal;
+}
+body.t-strona .t-okno th.t-liczba,
+body.t-strona .t-okno td.t-liczba { text-align: right; white-space: nowrap; }
+body.t-strona .t-okno td.pusto { text-align: center; color: var(--tekst-slaby); padding: 14px 6px; }
+.t-podtytul { font-size: 11px; color: var(--tekst-slaby); }
+
+/* Telefon i wąskie okna: okna jedno pod drugim, nadal sklejone cienkimi liniami. */
+@media (max-width: 900px) {
+  .t-siatka { grid-template-columns: 1fr; }
+  .t-siatka.t-dol-wysoki, .t-siatka.t-wysoki { grid-template-rows: none; }
+  body.t-strona .t-siatka > .t-okno,
+  body.t-strona .t-siatka > .t-okno[class*="t-k"] { grid-column: 1; grid-row: auto; }
+  .t-naroznik .t-naglowek { padding-right: 6px; }
+  .t-siatka > .t-okno:first-child .t-naglowek { padding-right: 34px; }
+  .t-tresc { max-height: 60vh; }
+  .t-tresc-tabela { overflow-x: auto; }
+}
+
+/* ---------------------------------------------------------------------------
+   Okna przesuwane i zmieniane rozmiarem (web/shared/okna.js, zadanie 017).
+   Uchwyty to cienkie paski na prawej i dolnej krawędzi okna (niewidoczne, dopóki
+   nie najedziesz); pierwszy sięga 4 px w głąb sąsiedniego okna, żeby nie zasłaniać
+   paska przewijania okna, do którego należy.
+   --------------------------------------------------------------------------- */
+.t-uchwyt { position: absolute; z-index: 4; display: none; touch-action: none; }
+@media (min-width: 901px) {
+  .t-uchwyt { display: block; }
+}
+.t-uchwyt-pion { top: 0; bottom: 0; right: -5px; width: 5px; cursor: col-resize; }
+.t-uchwyt-poziom { left: 0; right: 0; bottom: -5px; height: 5px; cursor: row-resize; }
+.t-uchwyt::after { content: ""; position: absolute; background: transparent; }
+.t-uchwyt-pion::after { top: 0; bottom: 0; left: 1px; width: 2px; }
+.t-uchwyt-poziom::after { left: 0; right: 0; top: 1px; height: 2px; }
+.t-uchwyt-aktywny::after { background: var(--akcent); }
+body.t-przeciaganie { user-select: none; -webkit-user-select: none; }
+body.t-przeciaganie .t-uchwyt-aktywny::after { background: var(--akcent); }
+@media (min-width: 901px) {
+  body.t-strona .t-siatka > .t-okno > .t-naglowek { cursor: grab; }
+  body.t-strona .t-siatka > .t-okno > .t-naglowek button,
+  body.t-strona .t-siatka > .t-okno > .t-naglowek a { cursor: pointer; }
+}
+body.t-strona .t-siatka > .t-okno.t-przeciagane { opacity: 0.55; }
+body.t-strona .t-siatka > .t-okno.t-cel-zamiany { outline: 2px solid var(--akcent); outline-offset: -2px; }
+
+/* Sekcja „Układ okien" w pasku bocznym (tylko na szerokim ekranie). */
+
+/* ===========================================================================
+   Karta „Youtube" (pełna platforma) — tylko to, co jej własne; reszta
+   stylu okien jest we wspólnym bloku „Terminal" wyżej.
+   =========================================================================== */
+/* Pasek tokenu GitHub nad siatką (widoczny tylko, gdy brak tokenu). */
+.yt-pasek-tokenu,
+.t-pasek-tokenu {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--linia);
+  background: var(--tlo-karty);
+}
+.yt-pasek-tokenu[hidden],
+.t-pasek-tokenu[hidden] { display: none; }
+.yt-pasek-tokenu label,
+.t-pasek-tokenu label { flex: 1 1 320px; }
+.yt-pasek-tokenu input,
+.t-pasek-tokenu input { font-size: 12px; padding: 3px 6px; }
+.yt-filtry { margin-top: 8px; }
+.yt-dodawanie { display: flex; align-items: flex-end; gap: 6px; }
+.yt-pole-linku { flex: 1 1 auto; min-width: 0; }
+.yt-podpowiedz { margin: 8px 0 3px; }
+.yt-lista-linkow { list-style: none; margin: 0; padding: 0; max-height: 150px; overflow-y: auto; border: 1px solid var(--linia-subtelna); }
+.yt-lista-linkow li { display: flex; align-items: center; gap: 6px; padding: 2px 6px; border-bottom: 1px solid var(--linia-subtelna); font-size: 12px; }
+.yt-lista-linkow li:last-child { border-bottom: 0; }
+.yt-lista-linkow .yt-pusta { color: var(--tekst-slaby); }
+.yt-lista-linkow .yt-typ { flex: 0 0 auto; width: 58px; color: var(--tekst-slaby); font-size: 11px; }
+.yt-lista-linkow button { padding: 0 8px; font-size: 11px; line-height: 1.6; }
+.yt-lista-linkow a { color: var(--tekst); flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.yt-lista-linkow .yt-edycja { flex: 1 1 auto; min-width: 0; }
+#pg-youtube th.yt-sortuj { cursor: pointer; text-decoration: underline dotted; }
+#pg-youtube td.yt-akcje { white-space: nowrap; }
+#pg-youtube td a { color: var(--tekst); text-decoration: none; }
+#pg-youtube td a:hover { color: var(--akcent); text-decoration: underline; }
+#pg-youtube td.yt-akcje button { padding: 0 8px; font-size: 11px; line-height: 1.6; }
+.yt-stan-odfiltrowany { color: var(--tekst-slaby); }
+.yt-stan-ok { color: var(--dobrze); }
+.yt-stan-blad { color: var(--blad); }
+.yt-ostrzezenie { color: var(--blad); font-weight: 600; }
+/* Okno „Kredyty i koszt": wiersze kluczy, podsumowanie, pasek postępu. */
+.yt-klucz-wiersz { margin: 4px 0; font-size: 12px; }
+.yt-klucz-wiersz progress,
+#yt-postep { display: block; width: 100%; height: 8px; margin: 3px 0; }
+.yt-podsumowanie { margin-top: 8px; font-size: 12px; line-height: 1.5; }
+#yt-status-archiwum { margin: 0; padding: 4px 6px; font-size: 11px; }
+/* Podgląd transkrypcji w oknie archiwum. */
+.yt-podglad { padding: 0 6px 8px; }
+.yt-podglad h3 { font-size: 12px; margin: 10px 0 6px; }
+.yt-podglad pre {
+  max-height: 300px;
+  overflow: auto;
+  white-space: pre-wrap;
+  background: var(--tlo-wyciszone);
+  color: var(--tekst);
+  border: 1px solid var(--linia-subtelna);
+  border-radius: 2px;
+  padding: 8px;
+  font-size: 11px;
+}
+
+/* Karta Earnings — wykres kapitalizacji ma stałą wysokość (420 px + lista spółek),
+   więc lewa kolumna to trzy okna jedno pod drugim (kalendarz, agregat dzienny,
+   dzień), a wykres zajmuje całą ich wysokość po prawej. Tylko na szerokich
+   ekranach — na telefonie okna układają się jedno pod drugim jak wszędzie. */
+@media (min-width: 901px) {
+  .t-siatka.ea-siatka { grid-template-rows: auto minmax(160px, 1fr) auto; }
+  body.t-strona .t-siatka.ea-siatka > .t-okno.ea-w-kal { grid-column: 1 / span 4; grid-row: 1; }
+  body.t-strona .t-siatka.ea-siatka > .t-okno.ea-w-wykres { grid-column: 5 / span 8; grid-row: 1 / span 2; }
+  body.t-strona .t-siatka.ea-siatka > .t-okno.ea-w-agregat { grid-column: 1 / span 4; grid-row: 2; }
+  body.t-strona .t-siatka.ea-siatka > .t-okno.ea-w-dzien { grid-column: 1 / span 4; grid-row: 3; }
+  body.t-strona .t-siatka.ea-siatka > .t-okno.ea-w-pelny { grid-column: 5 / span 8; grid-row: 3; }
+}
+.ea-siatka .t-okno th, .ea-siatka .t-okno td { white-space: nowrap; }
+
+/* Karta News: lista kanałów w kilku kolumnach (zamiast jednej długiej) w oknie 1. */
+body.t-strona .t-okno .lista-kanalow {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 4px 12px;
+}
+/* Linki w tabelach okien: jak zwykły tekst, podkreślenie i akcent dopiero po najechaniu. */
+body.t-strona .t-okno td a { color: var(--tekst); text-decoration: none; }
+body.t-strona .t-okno td a:hover { color: var(--akcent); text-decoration: underline; }
+
+/* ============================================================
+   Karta „Studio" (pełna platforma, dawniej „Artykuły"): trzy ekrany w przestrzeni roboczej (zadanie 042, uproszczone
+   2026-11-04): 1 Projekt, 2 Skrypt i nagranie, 3 Film. Kolory tylko ze zmiennych :root (oba motywy).
+   ============================================================ */
+
+
+.ar-autor { display: inline-block; padding: 0 5px; border: 1px solid var(--linia); border-radius: 3px; font-size: 10px; color: var(--tekst-slaby); }
+.ar-autor-claude { border-color: var(--akcent); color: var(--akcent); }
+.ar-blad { color: var(--blad); }
+
+.ar-pusty { margin: 0; padding: 10px; font-size: 12px; color: var(--tekst-slaby); }
+
+#pg-studio select.t-mini { max-width: 160px; }
+#pg-studio .t-akcje .t-mini { white-space: nowrap; }
+body#pg-studio.t-strona .t-tresc button.t-mini { padding: 0 8px; font-size: 11px; line-height: 1.7; }
+
+
+
+/* ---------------------------------------------------------------------------
+   Studio jako przestrzeń robocza (zadanie 042): ekrany Projekt (z sekcjami Styl i Pomysły na temat),
+   Skrypt i nagranie (widoki Pisz i Nagrywaj: telepromter) oraz Film (podgląd 9:16). Okna mają rozmiar
+   z przestrzeni, więc treść przewija się wewnątrz ekranu. Kolory wyłącznie ze zmiennych :root (oba motywy).
+   --------------------------------------------------------------------------- */
+#pg-studio .prz-element > .t-tresc { flex: 1 1 auto; min-height: 0; }
+
+.sd-kolumna { display: flex; flex-direction: column; gap: 6px; padding: 8px; overflow-y: auto; }
+.sd-podpis { font-size: 11px; color: var(--tekst-slaby); }
+.sd-chip { display: inline-block; padding: 1px 7px; font-size: 11px; line-height: 1.6; border: 1px solid var(--linia); border-radius: 999px; color: var(--tekst-slaby); white-space: nowrap; }
+.sd-chip-liczba { color: var(--tekst); background: var(--tlo-wyciszone); }
+.sd-sekcja-glowa { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 6px; padding-bottom: 3px; font-size: 12px; border-bottom: 1px solid var(--linia-subtelna); }
+/* Ogólna reguła `label` układa etykietę w kolumnie; przełączniki i suwaki Studio stoją w wierszu. */
+#pg-studio label.sd-przelacznik, #pg-studio label.sd-suwak { display: inline-flex; flex-direction: row; align-items: center; gap: 4px; margin: 0; font-size: 11px; color: var(--tekst-slaby); white-space: nowrap; cursor: pointer; }
+#pg-studio .sd-przelacznik input { margin: 0; }
+.sd-link-przycisk { display: inline-block; margin: 4px 0; font-size: 12px; font-weight: 600; color: var(--akcent); }
+/* Projekt */
+.sd-projekt-wiersz { display: flex; align-items: center; gap: 6px; }
+.sd-projekt-wybor { flex: 1 1 auto; min-width: 0; }
+.sd-cel-wiersz { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.sd-liczba { width: 64px; }
+.sd-instrukcje { list-style: none; margin: 0; padding: 0; }
+.sd-instr { display: flex; align-items: flex-start; gap: 6px; padding: 5px 2px; font-size: 12px; line-height: 1.45; border-bottom: 1px solid var(--linia-subtelna); }
+.sd-instr-tresc { flex: 1 1 auto; min-width: 0; white-space: pre-wrap; word-break: break-word; }
+.sd-odpowiedz { margin-top: 3px; padding: 3px 8px; border-left: 3px solid var(--dobrze); color: var(--tekst-slaby); }
+.sd-instr-forma { display: flex; flex-direction: column; gap: 4px; }
+.sd-instr-forma button { align-self: flex-end; }
+.sd-skrypt { container-type: inline-size; }
+/* Widok Pisz: trzy rubryki (tytuł, opis, skrypt); pole skryptu wypełnia ekran */
+.sd-skrypt { display: flex; flex-direction: column; gap: 8px; height: 100%; }
+#pg-studio label.sd-rubryka { display: flex; flex-direction: column; gap: 3px; margin: 0; color: var(--tekst); }
+.sd-rubryka-nazwa { display: flex; align-items: baseline; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--tekst-slaby); }
+.sd-rubryka textarea { width: 100%; font-size: 14px; line-height: 1.5; resize: vertical; }
+#pg-studio label.sd-rubryka-skrypt { flex: 1 1 auto; min-height: 0; }
+.sd-rubryka-skrypt textarea { flex: 1 1 auto; min-height: 240px; font-size: 15px; line-height: 1.6; resize: none; }
+/* Ekran Projekt: zwarta linia stanu zamiast kafelków */
+.sd-kafelki { display: flex; flex-wrap: wrap; gap: 6px; }
+.sd-stan { padding: 1px 9px; font-size: 12px; line-height: 1.7; color: var(--tekst-slaby); border: 1px solid var(--linia); border-radius: 999px; white-space: nowrap; cursor: default; }
+.sd-stan strong { color: var(--tekst); font-variant-numeric: tabular-nums; }
+.sd-stan-ok { border-color: var(--dobrze); }
+.sd-stan-czeka { border-color: var(--ostrzezenie); }
+/* Widok Nagrywaj: telepromter po lewej, nagrania po prawej */
+.sd-nagr-uklad { display: grid; grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr); gap: 8px; padding: 8px; min-height: 0; }
+.sd-tp-kolumna { display: flex; flex-direction: column; gap: 6px; min-width: 0; min-height: 0; }
+.sd-tp-sterowanie { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.sd-suwak input[type="range"] { width: 90px; }
+.sd-tp-czas { margin-left: auto; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--blad); }
+.sd-tp-okno { position: relative; flex: 1 1 auto; min-height: 220px; overflow: hidden; border: 1px solid var(--linia); border-radius: 6px; background: var(--tlo-wyciszone); outline: none; }
+.sd-tp-okno:focus-visible { border-color: var(--akcent); }
+/* Widok Nagrywaj: zakres nagrania (od zdania do zdania), pokrycie skryptu, numery zdań w telepromterze */
+.sd-tp-zakres { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+#pg-studio .sd-tp-zakres label.sd-suwak { flex: 1 1 240px; min-width: 0; }
+.sd-tp-zakres select { flex: 1 1 auto; min-width: 0; max-width: 100%; }
+.sd-tp-info { margin: 0; }
+.sd-tp-nr { margin-right: 4px; font-size: 0.4em; font-weight: 700; vertical-align: super; color: var(--akcent); }
+.sd-tp-koniec { margin: 18px 0 0; font-size: 14px; font-weight: 600; text-align: center; color: var(--tekst-slaby); }
+.sd-chip-uwaga { color: var(--ostrzezenie); border-color: var(--ostrzezenie); }
+.sd-tp-linia { position: sticky; top: 33%; z-index: 2; height: 0; border-top: 2px solid var(--akcent); pointer-events: none; }
+.sd-tp-tekst { padding: 8vh 6% 70vh; font-weight: 600; line-height: 1.4; color: var(--tekst); overflow-wrap: anywhere; }
+.sd-tp-tekst.sd-tp-lustro { transform: scaleX(-1); }
+.sd-tp-scena { margin-bottom: 0.9em; }
+.sd-tp-scena p { margin: 0; }
+.sd-tp-etykieta { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--tekst-slaby); }
+.sd-tp-przeczytane { color: var(--tekst-slaby); opacity: 0.55; }
+.sd-tp-pusty { margin: 24px; font-size: 14px; color: var(--tekst-slaby); }
+.sd-tp-odliczanie { position: absolute; inset: 0; z-index: 3; display: flex; align-items: center; justify-content: center; font-size: 120px; font-weight: 800; color: var(--akcent); background: var(--tlo-wyciszone); }
+.sd-tp-odliczanie[hidden] { display: none; }
+.sd-tp-kamera { position: absolute; right: 8px; bottom: 8px; z-index: 3; width: 22%; max-width: 180px; border-radius: 6px; border: 1px solid var(--linia); transform: scaleX(-1); }
+.sd-nagr-bok { display: flex; flex-direction: column; gap: 6px; min-width: 0; min-height: 0; overflow-y: auto; }
+.sd-nagr-wynik { display: flex; flex-direction: column; gap: 6px; }
+.sd-nagr-wynik audio, .sd-nagr-lista audio { width: 100%; height: 32px; }
+.sd-nagr-wideo { width: 100%; max-height: 260px; background: var(--tlo-wyciszone); border-radius: 4px; }
+.sd-nagr-lista { list-style: none; margin: 0; padding: 0; }
+.sd-nagr-poz { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px solid var(--linia-subtelna); }
+.sd-nagr-poz > span:first-child { flex: 1 1 140px; min-width: 0; }
+/* Ekran Film: podgląd 9:16 */
+.sd-pg-kolumna { display: flex; flex-direction: column; gap: 6px; padding: 6px; min-height: 0; }
+.sd-pg-obszar { position: relative; flex: 1 1 auto; min-height: 240px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 4px; background: var(--tlo-wyciszone); }
+.sd-pg-wrap { position: relative; overflow: hidden; flex: 0 0 auto; border-radius: 4px; }
+.sd-pg-ramka { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; pointer-events: none; }
+.sd-pg-strefy { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.sd-pg-strefy[hidden] { display: none; }
+.sd-pg-strefy svg { width: 100%; height: 100%; display: block; }
+.sd-pg-strefy rect { fill: var(--blad); fill-opacity: 0.22; stroke: var(--blad); stroke-opacity: 0.6; stroke-width: 3; }
+.sd-pg-pusta { max-width: 300px; padding: 16px; font-size: 12px; line-height: 1.6; text-align: center; color: var(--tekst-slaby); }
+.sd-pg-sterowanie { display: flex; align-items: center; gap: 6px; }
+.sd-pg-sterowanie input[type="range"] { flex: 1 1 auto; min-width: 0; }
+.sd-pg-info { margin: 0; }
+/* Sekcja Pomysły na temat (ekran Projekt) */
+.sd-tematy { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.sd-temat { padding: 8px 10px; border: 1px solid var(--linia); border-radius: 6px; background: var(--tlo-pola); }
+.sd-temat-glowa { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; font-size: 13px; line-height: 1.35; }
+.sd-temat-hook { margin: 6px 0 2px; font-size: 13px; font-weight: 600; }
+.sd-temat-opis { margin: 2px 0; font-size: 12px; line-height: 1.5; color: var(--tekst-slaby); }
+.sd-temat-liczby { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0; }
+.sd-temat-stopka { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 4px; font-size: 11px; }
+.sd-temat-stopka button { margin-left: auto; }
+/* Ekran Projekt: sekcje zwijane (Styl, Pomysły na temat) */
+.sd-ekran { gap: 10px; }
+.sd-sekcja { flex: 0 0 auto; border: 1px solid var(--linia); border-radius: 6px; background: var(--tlo-pola); }
+.sd-sekcja > summary { display: flex; align-items: center; gap: 8px; padding: 7px 10px; font-size: 13px; list-style: none; cursor: pointer; user-select: none; }
+.sd-sekcja > summary::-webkit-details-marker { display: none; }
+.sd-sekcja > summary::before { content: "▸"; flex: 0 0 auto; font-size: 11px; color: var(--tekst-slaby); }
+.sd-sekcja[open] > summary::before { content: "▾"; }
+.sd-sekcja-nazwa { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--tekst-slaby); }
+.sd-sekcja > :not(summary) { margin: 0 10px 8px; }
+.sd-sekcja > .sd-sekcja-podpis:empty { display: none; }
+.sd-styl-wybrany { display: inline-flex; align-items: center; gap: 8px; min-width: 0; margin-left: auto; }
+.sd-styl-wybrany strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sd-styl-mini { flex: 0 0 auto; height: 36px; aspect-ratio: 9 / 16; object-fit: cover; border: 1px solid var(--linia); border-radius: 3px; }
+.sd-styl-zastepczy { display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+.sd-sekcja > .sd-styl-pasek { display: flex; gap: 8px; margin: 0; padding: 2px 10px 10px; overflow-x: auto; scroll-snap-type: x proximity; }
+body.t-strona .sd-styl-pasek .sd-styl-poz { flex: 0 0 96px; display: flex; flex-direction: column; gap: 4px; padding: 4px; font: inherit; color: var(--tekst); background: var(--tlo-karty); border: 1px solid var(--linia); border-radius: 8px; cursor: pointer; scroll-snap-align: start; }
+body.t-strona .sd-styl-pasek .sd-styl-poz:hover { border-color: var(--akcent); }
+body.t-strona .sd-styl-pasek .sd-styl-poz.aktywny { border-color: var(--akcent); box-shadow: inset 0 0 0 1px var(--akcent); }
+.sd-styl-obraz { display: block; width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 5px; background: var(--tlo-wyciszone); }
+.sd-styl-obraz.sd-styl-zastepczy { font-size: 18px; }
+.sd-styl-nazwa { font-size: 11px; line-height: 1.25; text-align: center; }
+/* Okno powiększenia stylu */
+.sd-styl-okno { width: min(680px, calc(100vw - 24px)); max-height: calc(100vh - 24px); padding: 0; overflow: auto; color: var(--tekst); background: var(--tlo-karty); border: 1px solid var(--linia); border-radius: 10px; }
+.sd-styl-okno::backdrop { background: rgba(0, 0, 0, 0.55); }
+.sd-styl-okno-ramka { display: flex; gap: 16px; padding: 14px; }
+.sd-styl-okno-obraz { flex: 0 0 auto; height: min(70vh, 520px); aspect-ratio: 9 / 16; overflow: hidden; border: 1px solid var(--linia); border-radius: 12px; background: var(--tlo-wyciszone); }
+.sd-styl-okno-obraz img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.sd-styl-okno-opis { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.sd-styl-okno-opis h3 { margin: 0; font-size: 18px; }
+.sd-styl-okno-opis p { margin: 0; font-size: 13px; line-height: 1.5; }
+.sd-styl-okno-chipy { display: flex; flex-wrap: wrap; gap: 4px; }
+.sd-styl-okno-akcje { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+/* Ekran Skrypt i nagranie: przełącznik widoków w nagłówku */
+.sd-tryb { display: inline-flex; }
+body.t-strona .sd-tryb .t-mini { border-radius: 0; }
+body.t-strona .sd-tryb .t-mini:first-child { border-radius: 4px 0 0 4px; }
+body.t-strona .sd-tryb .t-mini:last-child { border-radius: 0 4px 4px 0; }
+body.t-strona .sd-tryb .t-mini.aktywny { color: var(--akcent-tekst); background: var(--akcent); border-color: var(--akcent); font-weight: 600; }
+.sd-tryb-akcje { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.sd-tryb-akcje[hidden], .sd-tryb-panel[hidden] { display: none; }
+.sd-ekran-skrypt-tresc { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.sd-ekran-skrypt-tresc > .sd-skrypt { flex: 1 1 auto; min-height: 0; padding: 8px; }
+.sd-ekran-skrypt-tresc > .sd-nagr-uklad { flex: 1 1 auto; }
+@media (max-width: 900px) {
+  .sd-nagr-uklad { grid-template-columns: minmax(0, 1fr); }
+  /* Telefon: telepromter ma stałą wysokość (tekst przewija się w nim), a wiersze siatki mają naturalną wysokość, żeby nowe nagranie nie nachodziło na tekst. */
+  .sd-ekran-skrypt-tresc > .sd-nagr-uklad { flex: 0 0 auto; }
+  .sd-tp-okno { flex: 0 0 auto; height: 50vh; min-height: 220px; }
+  .sd-tp-kolumna, .sd-nagr-bok { min-height: auto; }
+  .sd-pg-obszar { min-height: 60vh; }
+  /* Telefon: zakładek ekranów nie da się zamknąć przypadkiem (układ przywraca „Przywróć układ domyślny”). */
+  #pg-studio .prz-x { display: none; }
+}
+@media (max-width: 700px) {
+  .sd-styl-okno-ramka { flex-direction: column; align-items: center; }
+  .sd-styl-okno-obraz { height: min(52vh, 420px); }
+  .sd-styl-okno-opis { width: 100%; }
+}
+
+/* ---------------------------------------------------------------------------
+   Karta Social (zadanie 029) — wygląd w stylu X: zaokrąglone posty, awatar,
+   większa czcionka, zdjęcia i wykresy. Kolory wyłącznie ze zmiennych :root.
+   --------------------------------------------------------------------------- */
+body.t-strona .so-okno-key .t-tresc { padding: 10px; }
+.so-okno-key .opis { padding: 6px 4px; font-size: 14px; }
+.so-key { display: block; margin: 0 0 8px; padding: 10px 14px; border: 1px solid var(--linia-subtelna); border-radius: 14px; background: var(--tlo-pola); color: var(--tekst); text-decoration: none; }
+.so-key:hover { background: var(--akcent-tlo); border-color: var(--akcent); }
+.so-key-meta { display: block; font-size: 12px; color: var(--tekst-slaby); }
+.so-key-tytul { display: block; margin-top: 2px; font-size: 15px; font-weight: 700; line-height: 1.35; }
+
+body.t-strona .so-okno-strumien .t-tresc { padding: 0; background: var(--tlo); }
+.so-okno-strumien .t-akcje { flex-wrap: nowrap; gap: 6px; }
+.so-okno-strumien .t-akcje select { font-size: 11px; padding: 1px 4px; max-width: 96px; }
+@media (max-width: 900px) { .so-okno-strumien .t-akcje { flex-wrap: wrap; } }
+.so-zaplanowane { font-size: 11px; white-space: nowrap; display: inline-block; }
+.so-dzien { max-width: 680px; margin: 0 auto; padding: 0 12px; }
+.so-dzien-naglowek { position: sticky; top: 0; z-index: 2; margin: 0 -12px; padding: 12px 16px; font-size: 17px; font-weight: 800; background: var(--tlo); border-bottom: 1px solid var(--linia-subtelna); }
+.so-koniec-dnia { text-align: center; font-size: 13px; color: var(--tekst-slaby); padding: 12px 8px 20px; }
+.so-koniec { text-align: center; padding: 22px 10px 34px; font-size: 15px; color: var(--tekst-slaby); }
+.so-koniec button { font-size: 14px; padding: 8px 18px; border-radius: 999px; }
+
+.so-post { display: flex; gap: 12px; margin: 14px 0; padding: 14px 16px; background: var(--tlo-karty); border: 1px solid var(--linia-subtelna); border-radius: 18px; box-shadow: var(--plytka-cien); }
+.so-post.so-w3 { border-color: var(--akcent); }
+.so-post.so-podswietl { background: var(--akcent-tlo); }
+.so-awatar { flex: 0 0 44px; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--akcent-tlo); border: 1px solid var(--linia-subtelna); }
+.so-glowna { flex: 1 1 auto; min-width: 0; }
+.so-meta { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: baseline; font-size: 14px; color: var(--tekst-slaby); }
+.so-autor { font-weight: 800; color: var(--tekst); font-size: 15px; }
+.so-gw { margin-left: auto; letter-spacing: 1px; color: var(--akcent); font-size: 13px; }
+.so-zapl { padding: 0 8px; border-radius: 999px; background: var(--akcent-tlo); color: var(--tekst); font-size: 12px; }
+body.t-strona .t-tresc .so-tytul { margin: 6px 0 6px; font-size: 19px; line-height: 1.3; font-weight: 800; }
+.so-tresc { font-size: 16px; line-height: 1.55; }
+.so-tickery { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+.so-ticker { font-size: 14px; font-weight: 600; color: var(--akcent); }
+.so-obraz { margin: 12px 0 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--linia-subtelna); background: var(--tlo-wyciszone); }
+.so-obraz img { display: block; width: 100%; max-height: 320px; object-fit: cover; }
+.so-obraz figcaption { padding: 4px 10px; font-size: 11px; color: var(--tekst-slaby); }
+.so-wykresy { margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: 10px; }
+.so-wykres { padding: 10px 12px; border: 1px solid var(--linia-subtelna); border-radius: 14px; background: var(--tlo-pola); }
+.so-wykres-gora { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; }
+.so-wykres-ticker { font-weight: 800; }
+.so-wykres-zmiana { font-weight: 700; font-variant-numeric: tabular-nums; }
+.so-wykres svg { display: block; width: 100%; height: 84px; margin: 6px 0 2px; }
+.so-wykres-dol { font-size: 11px; color: var(--tekst-slaby); }
+.so-wykres-linia { fill: none; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.so-wzrost .so-wykres-zmiana { color: var(--dobrze); }
+.so-wzrost .so-wykres-linia { stroke: var(--dobrze); }
+.so-wzrost .so-wykres-obszar { fill: var(--dobrze); fill-opacity: 0.12; }
+.so-spadek .so-wykres-zmiana { color: var(--blad); }
+.so-spadek .so-wykres-linia { stroke: var(--blad); }
+.so-spadek .so-wykres-obszar { fill: var(--blad); fill-opacity: 0.12; }
+.so-zrodla { margin-top: 12px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.so-link { display: flex; min-width: 0; max-width: 100%; box-sizing: border-box; gap: 8px; align-items: center; padding: 8px 12px; border: 1px solid var(--linia-subtelna); border-radius: 12px; font-size: 13px; color: var(--tekst); text-decoration: none; background: var(--tlo-pola); }
+a.so-link:hover { background: var(--akcent-tlo); }
+.so-link-tytul { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--akcent); }
+.so-karta { flex: 0 0 auto; padding: 0 8px; border: 1px solid var(--linia); border-radius: 999px; font-size: 11px; color: var(--tekst); }
+.so-stopka { margin-top: 12px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--tekst-slaby); }
+.so-akcja { padding: 4px 12px; border-radius: 999px; font-size: 13px; background: transparent; }
+.so-jak summary { cursor: pointer; }
+.so-jak div { margin-top: 6px; max-width: 60ch; }
+.so-uwagi { margin: 10px 0 0; padding-left: 20px; font-size: 14px; }
+.so-uwagi .so-zrobione { text-decoration: line-through; color: var(--tekst-slaby); }
+@media (max-width: 600px) { .so-post { padding: 12px; gap: 8px; } .so-awatar { flex-basis: 36px; width: 36px; height: 36px; font-size: 16px; } }
+
+/* Social: uwagi (dodawanie, usuwanie, „zrobione”), „Jak powstał” i panel instrukcji */
+.so-akcja { cursor: pointer; }
+.so-formularz { margin-top: 10px; }
+.so-formularz textarea { width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: 15px; border-radius: 12px; resize: vertical; }
+.so-formularz-przyciski { margin-top: 6px; display: flex; gap: 8px; }
+.so-uwagi { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
+.so-uwaga { display: flex; gap: 8px; align-items: flex-start; padding: 8px 10px; border: 1px dashed var(--linia); border-radius: 12px; font-size: 14px; background: var(--tlo-pola); }
+.so-uwaga-tresc { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.so-uwaga.so-zrobione .so-uwaga-tresc { text-decoration: line-through; color: var(--tekst-slaby); }
+.so-uwaga-usun { flex: 0 0 auto; padding: 0 8px; border-radius: 999px; font-size: 13px; background: transparent; cursor: pointer; }
+.so-uwaga-usun:hover { color: var(--blad); border-color: var(--blad); }
+.so-jak { flex: 1 1 100%; }
+.so-jak .so-jak-tresc { margin-top: 8px; padding: 10px 12px; border: 1px solid var(--linia-subtelna); border-radius: 12px; background: var(--tlo-pola); color: var(--tekst); font-size: 14px; line-height: 1.5; max-width: none; }
+.so-md h4 { margin: 10px 0 4px; font-size: 15px; }
+.so-md p, .so-jak-tresc p { margin: 6px 0; }
+.so-md ul, .so-md ol { margin: 6px 0; padding-left: 22px; }
+.so-md li { margin: 3px 0; }
+.so-md code, .so-jak-tresc code, .so-instrukcje code { padding: 0 4px; border-radius: 4px; background: var(--tlo-wyciszone); font-size: 13px; }
+.so-instrukcje { max-width: 680px; margin: 12px auto; padding: 12px 16px; border: 1px solid var(--akcent); border-radius: 18px; background: var(--tlo-karty); font-size: 14px; line-height: 1.5; }
+.so-instrukcje-gora { display: flex; justify-content: space-between; align-items: center; font-size: 17px; }
+.so-instrukcje-opis { color: var(--tekst-slaby); }
+.so-md-blok { margin: 8px 0; padding: 8px 12px; border: 1px solid var(--linia-subtelna); border-radius: 12px; background: var(--tlo-pola); }
+.so-md-blok > summary { cursor: pointer; font-weight: 700; }
+
+/* Social: wykres kapitalizacji sektora i marker końca dnia */
+.so-wykresy-sektor { grid-template-columns: minmax(0, 1fr); }
+.so-wykres-kropka { fill: var(--tlo-karty); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.so-wzrost .so-wykres-kropka { stroke: var(--dobrze); }
+.so-spadek .so-wykres-kropka { stroke: var(--blad); }
+.so-wykres-szeroki svg { height: 120px; }
+.so-wykres-szeroki .so-wykres-dol { display: flex; justify-content: space-between; gap: 12px; }
+.so-koniec-dnia { display: flex; align-items: center; gap: 12px; }
+.so-koniec-dnia::before, .so-koniec-dnia::after { content: ""; flex: 1 1 auto; border-top: 1px dashed var(--linia); }
+
+/* Social: pasek narzędzi, chipy typów (kolor na typ), interaktywne wykresy, filmy, powiększanie zdjęć */
+.so-okno-strumien { --typ-E1: 205 80% 50%; --typ-E2: 150 60% 38%; --typ-E3: 35 90% 48%; --typ-E4: 275 55% 55%; --typ-Y1: 0 75% 52%; --typ-N1: 215 15% 50%; }
+.so-pasek { position: sticky; top: 0; z-index: 4; padding: 10px 12px 8px; background: var(--tlo); border-bottom: 1px solid var(--linia-subtelna); display: grid; gap: 8px; }
+.so-pasek input[type="search"] { width: 100%; box-sizing: border-box; padding: 9px 14px; font-size: 15px; border-radius: 999px; }
+.so-pasek-chipy { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.so-chipy { display: contents; }
+.so-chip { padding: 4px 12px; border-radius: 999px; font-size: 13px; cursor: pointer; background: var(--tlo-pola); border: 1px solid var(--linia); color: var(--tekst); }
+.so-chip.aktywny { background: var(--akcent); border-color: var(--akcent); color: var(--akcent-tekst); }
+.so-chip-E1.aktywny { background: hsl(var(--typ-E1)); border-color: hsl(var(--typ-E1)); color: #fff; }
+.so-chip-E2.aktywny { background: hsl(var(--typ-E2)); border-color: hsl(var(--typ-E2)); color: #fff; }
+.so-chip-E3.aktywny { background: hsl(var(--typ-E3)); border-color: hsl(var(--typ-E3)); color: #fff; }
+.so-chip-E4.aktywny { background: hsl(var(--typ-E4)); border-color: hsl(var(--typ-E4)); color: #fff; }
+.so-chip-Y1.aktywny { background: hsl(var(--typ-Y1)); border-color: hsl(var(--typ-Y1)); color: #fff; }
+.so-chip-N1.aktywny { background: hsl(var(--typ-N1)); border-color: hsl(var(--typ-N1)); color: #fff; }
+.so-pasek-dol { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 12px; color: var(--tekst-slaby); }
+.so-pasek-dol select { font-size: 12px; padding: 2px 6px; border-radius: 999px; }
+.so-liczba { margin-left: auto; }
+.so-dzien-naglowek { top: var(--so-pasek-h, 0px); display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.so-dzien-licznik { font-size: 13px; font-weight: 500; color: var(--tekst-slaby); }
+.so-awatar-E1 { background: hsl(var(--typ-E1) / 0.18); border-color: hsl(var(--typ-E1) / 0.6); }
+.so-awatar-E2 { background: hsl(var(--typ-E2) / 0.18); border-color: hsl(var(--typ-E2) / 0.6); }
+.so-awatar-E3 { background: hsl(var(--typ-E3) / 0.18); border-color: hsl(var(--typ-E3) / 0.6); }
+.so-awatar-E4 { background: hsl(var(--typ-E4) / 0.18); border-color: hsl(var(--typ-E4) / 0.6); }
+.so-awatar-Y1 { background: hsl(var(--typ-Y1) / 0.18); border-color: hsl(var(--typ-Y1) / 0.6); }
+.so-awatar-N1 { background: hsl(var(--typ-N1) / 0.18); border-color: hsl(var(--typ-N1) / 0.6); }
+.so-post.so-aktywny { outline: 2px solid var(--akcent); outline-offset: 2px; }
+.so-tresc-opak.so-skrocona { max-height: 11.5em; overflow: hidden; position: relative; -webkit-mask-image: linear-gradient(#000 70%, transparent); mask-image: linear-gradient(#000 70%, transparent); }
+.so-rozwin { margin-top: 4px; padding: 2px 0; border: 0; background: transparent; color: var(--akcent); font-size: 14px; font-weight: 600; cursor: pointer; }
+.so-domena { flex: 0 0 auto; margin-left: auto; font-size: 11px; color: var(--tekst-slaby); }
+.so-obraz img { cursor: zoom-in; }
+.so-lightbox { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(0, 0, 0, 0.88); cursor: zoom-out; }
+.so-lightbox img { max-width: 100%; max-height: 100%; border-radius: 12px; }
+.so-film { margin-top: 12px; border: 1px solid var(--linia-subtelna); border-radius: 16px; overflow: hidden; background: var(--tlo-pola); }
+.so-film-okladka { position: relative; display: block; width: 100%; padding: 0; border: 0; border-radius: 0; background: #000; cursor: pointer; aspect-ratio: 16 / 9; }
+.so-film-okladka img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.9; }
+.so-film-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; border-radius: 50%; background: hsl(var(--typ-Y1)); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 26px; padding-left: 4px; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5); }
+.so-film-etykieta { position: absolute; left: 10px; bottom: 10px; padding: 3px 10px; border-radius: 999px; font-size: 12px; background: rgba(0, 0, 0, 0.7); color: #fff; }
+.so-film-ramka { position: relative; aspect-ratio: 16 / 9; background: #000; }
+.so-film-ramka iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.so-film-podpis { padding: 8px 12px; font-size: 13px; color: var(--tekst-slaby); }
+.so-film-podpis a { color: var(--akcent); }
+.so-wykres { position: relative; }
+.so-wykres svg { height: auto; max-width: 100%; touch-action: pan-y; cursor: crosshair; }
+.so-wykres-dol { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.so-wykres-info { min-width: 0; }
+.so-zakresy { display: inline-flex; gap: 4px; }
+.so-zakres { padding: 1px 8px; border-radius: 999px; font-size: 11px; background: transparent; cursor: pointer; }
+.so-zakres.aktywny { background: var(--akcent); border-color: var(--akcent); color: var(--akcent-tekst); }
+.so-os { font-size: 9px; fill: var(--tekst-slaby); }
+.so-krzyz { stroke: var(--tekst-slaby); stroke-width: 1; stroke-dasharray: 3 3; vector-effect: non-scaling-stroke; }
+.so-punkt-hover { fill: var(--tlo-karty); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.so-wzrost .so-punkt-hover { stroke: var(--dobrze); }
+.so-spadek .so-punkt-hover { stroke: var(--blad); }
+.so-wykres-szkielet .so-szkielet-pole { height: 96px; margin-top: 8px; border-radius: 8px; background: linear-gradient(90deg, var(--tlo-wyciszone), var(--linia-subtelna), var(--tlo-wyciszone)); background-size: 200% 100%; animation: so-szkielet 1.4s linear infinite; }
+@keyframes so-szkielet { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.so-wykres-brak { font-size: 13px; color: var(--tekst-slaby); }
+.so-wykres-szeroki svg { height: auto; }
+
+/* Social: zwarty pasek narzędzi */
+.so-pasek { padding: 8px 12px 6px; gap: 6px; }
+.so-pasek-gora { display: flex; gap: 8px; }
+.so-pasek-gora input[type="search"] { flex: 1 1 auto; padding: 6px 14px; font-size: 14px; }
+.so-pasek-gora select { flex: 0 0 auto; max-width: 150px; font-size: 12px; padding: 2px 8px; border-radius: 999px; }
+.so-pasek-chipy { gap: 5px; }
+.so-chip { padding: 2px 10px; font-size: 12px; }
+.so-pasek-chipy .so-zaplanowane { font-size: 12px; color: var(--tekst-slaby); margin-left: 4px; }
+.so-pasek-chipy .so-liczba { margin-left: auto; font-size: 12px; color: var(--tekst-slaby); }
+.so-akcja, .so-zakres, .so-uwaga-usun, .so-rozwin { color: var(--tekst); }
+.so-zakres.aktywny { color: var(--akcent-tekst); }
+.so-rozwin { color: var(--akcent); }
+.so-akcja { border: 1px solid var(--linia); }
+.so-zakres { border: 1px solid var(--linia-subtelna); }
+
+/* ---------------------------------------------------------------------------
+   Social, układ jednego okna: lewa kolumna (wskaźniki, key posty, status) + strumień
+   --------------------------------------------------------------------------- */
+.so-okno-social { position: relative; --typ-E1: 205 80% 50%; --typ-E2: 150 60% 38%; --typ-E3: 35 90% 48%; --typ-E4: 275 55% 55%; --typ-Y1: 0 75% 52%; --typ-N1: 215 15% 50%; --typ-D1: 190 70% 42%; }
+body.t-strona .so-okno-social .t-tresc { padding: 0; background: var(--tlo); }
+.so-uklad { display: grid; grid-template-columns: 310px minmax(0, 1fr); align-items: start; }
+.so-boczna { position: sticky; top: 0; align-self: start; max-height: calc(100vh - 120px); overflow-y: auto; padding: 10px; display: grid; gap: 10px; border-right: 1px solid var(--linia-subtelna); background: var(--tlo); }
+.so-kolumna { min-width: 0; }
+.so-widget { padding: 10px 12px; border: 1px solid var(--linia-subtelna); border-radius: 16px; background: var(--tlo-karty); }
+.so-widget-gora { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.so-widget h3, body.t-strona .t-tresc .so-widget h3 { margin: 0; font-size: 16px; font-weight: 800; }
+body.t-strona .t-tresc .so-widget h3.so-podtytul { margin: 12px 0 6px; font-size: 14px; }
+.so-wskazniki-siatka { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.so-wsk { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto auto; gap: 0 6px; padding: 6px 8px; border: 1px solid var(--linia-subtelna); border-radius: 12px; background: var(--tlo-pola); cursor: help; }
+.so-wsk-nazwa { grid-column: 1 / -1; font-size: 11px; color: var(--tekst-slaby); }
+.so-wsk-wartosc { font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.so-wsk-zmiana { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; align-self: end; }
+.so-wsk .so-mini { grid-column: 1 / -1; width: 100%; height: 18px; }
+.so-wsk.so-wzrost .so-wsk-zmiana { color: var(--dobrze); }
+.so-wsk.so-spadek .so-wsk-zmiana { color: var(--blad); }
+.so-wsk.so-wzrost .so-mini polyline { stroke: var(--dobrze); }
+.so-wsk.so-spadek .so-mini polyline { stroke: var(--blad); }
+.so-wsk-brak .so-wsk-wartosc { color: var(--tekst-slaby); font-size: 13px; }
+.so-wzrost-tekst { color: var(--dobrze); }
+.so-spadek-tekst { color: var(--blad); }
+.so-opcje-symbol { padding: 8px 10px; margin-bottom: 6px; border: 1px solid var(--linia-subtelna); border-radius: 12px; background: var(--tlo-pola); }
+.so-opcje-gora { display: flex; justify-content: space-between; font-size: 13px; }
+.so-opcje-siatka { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; margin-top: 4px; font-size: 12px; }
+.so-opcje-siatka span { color: var(--tekst-slaby); cursor: help; }
+.so-opcje-siatka strong { text-align: right; font-variant-numeric: tabular-nums; }
+.so-opcje-trend { display: flex; align-items: center; gap: 8px; margin-top: 4px; font-size: 11px; color: var(--tekst-slaby); }
+.so-opcje-trend .so-mini polyline { stroke: var(--akcent); }
+.so-opcje-stopka { font-size: 11px; color: var(--tekst-slaby); }
+.so-widget-key #so-key-lista { display: grid; gap: 6px; }
+.so-widget-key .so-key { margin: 0; padding: 8px 10px; }
+.so-widget-key .so-key-tytul { font-size: 14px; }
+.so-key-typ { display: inline-block; padding: 0 6px; border-radius: 999px; font-size: 10px; font-weight: 700; border: 1px solid var(--linia); }
+.so-status-lista { display: flex; flex-wrap: wrap; gap: 5px; }
+.so-status-dzien { flex: 1 1 100%; font-size: 12px; color: var(--tekst-slaby); }
+.so-status-chip { padding: 1px 8px; border-radius: 999px; font-size: 11px; border: 1px solid var(--linia-subtelna); }
+.so-status-chip.ok { border-color: var(--dobrze); color: var(--dobrze); }
+.so-status-chip.brak { color: var(--tekst-slaby); }
+.so-awatar-D1 { background: hsl(var(--typ-D1) / 0.18); border-color: hsl(var(--typ-D1) / 0.6); }
+.so-chip-D1.aktywny { background: hsl(var(--typ-D1)); border-color: hsl(var(--typ-D1)); color: #fff; }
+.so-post.so-pigulka { border-color: hsl(var(--typ-D1)); background: linear-gradient(180deg, hsl(var(--typ-D1) / 0.10), var(--tlo-karty) 60%); }
+.so-tresc ul { margin: 6px 0; padding-left: 20px; }
+.so-tresc li { margin: 6px 0; }
+.so-tresc p { margin: 0 0 10px; }
+.so-pojecie { border-bottom: 1px dotted var(--tekst-slaby); cursor: help; }
+.so-odznaki { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.so-oczek, .so-reakcja { padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; border: 1px solid var(--linia-subtelna); background: var(--tlo-pola); }
+.so-beat { border-color: var(--dobrze); color: var(--dobrze); }
+.so-miss { border-color: var(--blad); color: var(--blad); }
+.so-temat { padding: 0 6px; border: 0; background: transparent; color: var(--tekst-slaby); font-size: 14px; cursor: pointer; }
+.so-temat:hover { color: var(--akcent); }
+.so-platne { flex: 0 0 auto; padding: 0 6px; border-radius: 999px; font-size: 10px; border: 1px solid var(--ostrzezenie); color: var(--ostrzezenie); }
+.so-oceny { margin-left: auto; display: inline-flex; gap: 3px; }
+.so-ocena { padding: 0 7px; border-radius: 999px; font-size: 12px; background: transparent; cursor: pointer; border: 1px solid var(--linia-subtelna); color: var(--tekst); }
+.so-ocena.aktywny, .so-akcja.aktywny { background: var(--akcent-tlo); border-color: var(--akcent); }
+.so-wykresy-pasek { margin-top: 10px; }
+.so-seria { fill: none; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.so-zero { stroke: var(--linia); stroke-dasharray: 4 4; vector-effect: non-scaling-stroke; }
+.so-legendy { display: inline-flex; flex-wrap: wrap; gap: 4px 12px; }
+.so-legenda { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; }
+.so-legenda i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.so-toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 1100; padding: 10px 18px; border-radius: 999px; background: var(--tekst); color: var(--tlo); font-size: 14px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4); max-width: 90vw; }
+.so-gora { position: absolute; right: 18px; bottom: 16px; z-index: 6; padding: 6px 14px; border-radius: 999px; font-size: 13px; background: var(--akcent); border-color: var(--akcent); color: var(--akcent-tekst); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35); cursor: pointer; }
+@media (max-width: 900px) {
+  .so-uklad { grid-template-columns: 1fr; }
+  .so-boczna { position: static; max-height: none; border-right: 0; border-bottom: 1px solid var(--linia-subtelna); }
+  .so-widget-status { display: none; }
+}
+.so-opcje-stare { margin-bottom: 6px; padding: 6px 10px; border: 1px solid var(--ostrzezenie); border-radius: 10px; font-size: 12px; color: var(--ostrzezenie); }
+
+/* Social: przeczytane posty (na końcu strumienia, przygaszone) */
+.so-post.so-przeczytany { opacity: 0.72; box-shadow: none; }
+.so-post.so-przeczytany .so-tytul { font-size: 16px; }
+.so-akcja-czytane { font-weight: 600; }
+.so-dzien-przycisk { margin-left: 10px; padding: 0 10px; font-size: 12px; }
+.so-dzien-pusty .so-dzien-naglowek { opacity: 0.7; }
+.so-przeczytane-sekcja .so-dzien-naglowek { border-top: 2px solid var(--linia); }
+
+/* ===========================================================================
+   Panel „Płynność” w oknie „Zakłady” (karta Zajęcie pozycji, zadanie 033,
+   sekcja 11b w zajecie_pozycji_karta.py). Wykresy to SVG rysowane w JS; kolory
+   wyłącznie ze zmiennych :root: call --dobrze, put --blad, cena indeksu
+   --tekst-slaby, strike'i zakładów --akcent, ściany OI i próg spreadu --ostrzezenie.
+   =========================================================================== */
+.zp-widoki-akcje[hidden] { display: none; }
+.zp-zakladka-plynnosc { margin-left: 10px; border-style: dashed; }
+.zp-zakladka-plynnosc.aktywna { border-style: solid; }
+.zp-plynnosc,
+.zp-pl-tresc { display: flex; flex-direction: column; gap: 12px; }
+.zp-plynnosc[hidden],
+.zp-pl-tresc[hidden] { display: none; }
+.zp-pl-naglowek { margin: 0; }
+.zp-pl-sekcja { min-width: 0; }
+body.t-strona .t-tresc .zp-pl-sekcja h3 { display: flex; align-items: center; margin: 0 0 6px; }
+.zp-pl-pasek { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 12px; margin-bottom: 4px; }
+body.t-strona .t-tresc .zp-pl-pasek h3 { margin: 0; }
+.zp-pl-przelaczniki { display: flex; gap: 4px; }
+body.t-strona .t-tresc .zp-pl-przelaczniki button { padding: 2px 10px; font-size: 11px; }
+.zp-pl-przelaczniki button.aktywny { background: var(--akcent); color: var(--akcent-tekst); border-color: transparent; }
+.zp-pl-sciany { margin: 0 0 6px; font-size: 11px; color: var(--tekst-slaby); }
+.zp-pl-wykresy { position: relative; }
+.zp-pl-wykres + .zp-pl-wykres { margin-top: 6px; }
+.zp-pl-podpis { font-size: 11px; color: var(--tekst-slaby); margin: 0 0 2px; }
+.zp-pl-wykres svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
+.zp-pl-os { stroke: var(--linia); stroke-width: 1; }
+.zp-pl-tekst { fill: var(--tekst-slaby); font-size: 10px; font-family: ui-monospace, "SF Mono", Consolas, monospace; }
+.zp-pl-tekst-prog { fill: var(--ostrzezenie); }
+.zp-pl-oi-call { fill: var(--dobrze); fill-opacity: 0.35; }
+.zp-pl-wol-call { fill: var(--dobrze); fill-opacity: 0.95; }
+.zp-pl-oi-put { fill: var(--blad); fill-opacity: 0.35; }
+.zp-pl-wol-put { fill: var(--blad); fill-opacity: 0.95; }
+.zp-pl-sciana { stroke: var(--ostrzezenie); stroke-width: 1.5; }
+.zp-pl-indeks { stroke: var(--tekst-slaby); stroke-width: 1; stroke-dasharray: 4 3; }
+.zp-pl-sprzedana { fill: var(--akcent); }
+.zp-pl-kupiona { fill: none; stroke: var(--akcent); stroke-width: 1.5; }
+.zp-pl-linia-call { fill: none; stroke: var(--dobrze); stroke-width: 1.5; }
+.zp-pl-linia-put { fill: none; stroke: var(--blad); stroke-width: 1.5; }
+.zp-pl-kropka-call { fill: var(--dobrze); }
+.zp-pl-kropka-put { fill: var(--blad); }
+.zp-pl-prog { stroke: var(--ostrzezenie); stroke-width: 1; stroke-dasharray: 3 3; }
+.zp-pl-bid { fill: var(--akcent); fill-opacity: 0.8; }
+.zp-pl-ask { fill: var(--ostrzezenie); fill-opacity: 0.8; }
+.zp-pl-celownik { stroke: var(--tekst); stroke-width: 1; stroke-opacity: 0.45; pointer-events: none; }
+.zp-pl-legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 6px 0 8px; font-size: 11px; color: var(--tekst-slaby); }
+.zp-pl-legenda span { display: inline-flex; align-items: center; gap: 4px; }
+.zp-pl-legenda i { display: inline-block; width: 10px; height: 10px; }
+.zp-pl-legenda b { font-weight: 400; font-size: 10px; color: var(--akcent); }
+.zp-pl-l-oi-call { background: var(--dobrze); opacity: 0.35; }
+.zp-pl-l-wol-call { background: var(--dobrze); }
+.zp-pl-l-oi-put { background: var(--blad); opacity: 0.35; }
+.zp-pl-l-wol-put { background: var(--blad); }
+.zp-pl-l-sciana { border: 1.5px solid var(--ostrzezenie); box-sizing: border-box; }
+.zp-pl-legenda i.zp-pl-l-indeks { width: 0; height: 12px; border-left: 1px dashed var(--tekst-slaby); }
+.zp-pl-l-bid { background: var(--akcent); opacity: 0.8; }
+.zp-pl-l-ask { background: var(--ostrzezenie); opacity: 0.8; }
+.zp-pl-dymek {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  max-width: 320px;
+  padding: 6px 8px;
+  font-size: 11px;
+  background: var(--tlo-karty);
+  color: var(--tekst);
+  border: 1px solid var(--linia);
+  border-radius: 6px;
+  box-shadow: var(--plytka-cien);
+}
+.zp-pl-dymek[hidden] { display: none; }
+.zp-pl-dymek-tytul { margin-bottom: 2px; }
+.zp-pl-dymek-znaczniki { margin-bottom: 4px; color: var(--ostrzezenie); }
+body.t-strona .t-okno .zp-pl-dymek table { width: auto; font-size: 11px; }
+body.t-strona .t-okno .zp-pl-dymek th,
+body.t-strona .t-okno .zp-pl-dymek td { padding: 1px 6px; white-space: nowrap; }
+.zp-pl-dymek tbody th { text-align: left; font-weight: 400; color: var(--tekst-slaby); }
+.zp-pl-tabela tbody tr[data-expiry] { cursor: pointer; }
+.zp-pl-tabela tbody tr[data-expiry]:hover td { background: var(--blok-tlo-hover); }
+.zp-pl-tabela tr.wybrany td,
+.zp-pl-tabela tr.zp-pl-w-expiry td { background: var(--akcent-tlo); }
+.zp-pl-tabela tr.zp-pl-martwe td { color: var(--tekst-slaby); }
+.zp-pl-tabela tfoot td { font-weight: 700; border-top: 1px solid var(--linia); }
+.zp-pl-uwaga { color: var(--ostrzezenie); }
+.zp-pl-poza { text-decoration: underline dotted; }
+.zp-pl-sciana-tekst { color: var(--ostrzezenie); font-weight: 700; }
+.zp-pl-lancuch th.zp-pl-strona { text-align: center; letter-spacing: 0.06em; }
+.zp-pl-lancuch .zp-pl-strike { text-align: center; font-weight: 700; background: var(--tlo-wyciszone); }
+.zp-pl-lancuch tr.zp-pl-atm td { border-top: 1px solid var(--tekst-slaby); border-bottom: 1px solid var(--tekst-slaby); }
+.zp-pl-lancuch tr.zp-pl-zaklad td.zp-pl-strike { color: var(--akcent); }
+.zp-pl-lancuch td:first-child { font-family: ui-monospace, "SF Mono", Consolas, monospace; }
+body.t-strona .t-okno .zp-pl-tabela td { white-space: nowrap; }
+.zp-pl-oferty-call { fill: var(--dobrze); fill-opacity: 0.35; }
+.zp-pl-oferty-put { fill: var(--blad); fill-opacity: 0.35; }
+.zp-pl-l-oferty-call { background: var(--dobrze); opacity: 0.35; }
+.zp-pl-l-oferty-put { background: var(--blad); opacity: 0.35; }
+
+/* ===========================================================================
+   Styl TradingView (zadanie 034, 2026-10-25). Ten blok stoi na końcu pliku i
+   nadpisuje wcześniejsze reguły: płaskie okna bez cieni, cienkie linie, kolory
+   i czcionka jak w TradingView, wąska szyna ikon zamiast szerokiego menu,
+   dymki zamiast tekstów pomocniczych. Kolory tylko ze zmiennych :root (paleta
+   Dzień i Noc na początku pliku); dymki mają własne zmienne poniżej.
+   =========================================================================== */
+:root, :root[data-motyw="dzien"] {
+  --wiersz-hover: rgba(41, 98, 255, 0.06);
+  --dymek-tlo: #131722;
+  --dymek-tekst: #ffffff;
+  --wzrost: #089981;
+  --spadek: #f23645;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-motyw="dzien"]) { --wiersz-hover: rgba(255, 255, 255, 0.05); --dymek-tlo: #363a45; --dymek-tekst: #ffffff; }
+}
+:root[data-motyw="noc"] { --wiersz-hover: rgba(255, 255, 255, 0.05); --dymek-tlo: #363a45; --dymek-tekst: #ffffff; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Trebuchet MS", Roboto, Ubuntu, "Segoe UI", sans-serif;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+* { scrollbar-width: thin; scrollbar-color: var(--linia) transparent; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--linia); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--tekst-slaby); }
+::selection { background: var(--akcent-tlo); }
+
+/* Kontrolki: płaskie, 4 px, niebieski fokus (jak pola w TradingView). */
+button {
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+button:not([class]):hover:not(:disabled) { background: var(--akcent-hover); }
+.zp-btn-maly:hover:not(:disabled), .zp-zakladka:hover:not(.aktywna), .t-mini:hover { background: var(--akcent-tlo); }
+button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px solid var(--akcent); outline-offset: 1px; }
+input, select, textarea { font-family: inherit; font-size: 13px; padding: 5px 8px; border-radius: 4px; transition: border-color 0.12s ease, box-shadow 0.12s ease; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--akcent); box-shadow: 0 0 0 1px var(--akcent); }
+body.t-strona .t-tresc button { border-radius: 4px; }
+body.t-strona .t-tresc input, body.t-strona .t-tresc select, body.t-strona .t-tresc textarea { border-radius: 4px; }
+h1 { font-size: 20px; } h2 { font-size: 14px; }
+.karta { background: var(--plytka); border: 1px solid var(--plytka-obrys); border-radius: 6px; box-shadow: none; padding: 14px 16px; }
+.karta.blok-numerowany:hover { background: var(--plytka-hover); box-shadow: none; }
+
+/* Okna jak panele TradingView: pełna szerokość, bez zaokrągleń, nagłówek 28 px. */
+body.t-strona main { padding: 0; }
+.t-siatka { border: 0; margin-bottom: 0; }
+.t-naglowek { height: 28px; padding: 0 8px 0 30px; background: var(--tlo-wyciszone); border-bottom: 1px solid var(--linia); }
+.t-naglowek h2 { font-size: 12px; font-weight: 600; letter-spacing: 0; color: var(--tekst); }
+.t-akcje { gap: 6px; }
+.t-tresc { padding: 10px; }
+body.t-strona .t-tresc label { font-size: 12px; }
+body.t-strona .t-tresc .opis { font-size: 12px; }
+.t-mini { border-radius: 4px; padding: 2px 9px; font-size: 12px; border-color: var(--linia); color: var(--tekst); }
+body.t-strona .t-akcje > button.t-mini { padding: 2px 9px; font-size: 12px; }
+
+/* Numerki bloków i litery grup: stonowane, żeby nie przykrywały treści. */
+body.t-strona .t-siatka > .t-okno > .oznaczenie-bloku {
+  top: 5px; left: 6px; min-width: 18px; height: 18px; padding: 0 4px; font-size: 10px; font-weight: 600;
+  background: var(--tlo-pola); color: var(--tekst-slaby); border: 1px solid var(--linia); box-shadow: none;
+}
+body.t-strona .t-siatka > .t-okno:hover > .oznaczenie-bloku { color: var(--akcent); border-color: var(--akcent); }
+.oznaczenie-zakres, .oznaczenie-strony {
+  min-width: 18px; height: 18px; padding: 0 4px; font-size: 10px; font-weight: 600; border-radius: 3px;
+  background: var(--tlo-pola); color: var(--ozn-bursztyn); border: 1px solid var(--ozn-bursztyn); box-shadow: none; opacity: 0.85;
+}
+.oznaczenie-zakres:hover, .oznaczenie-strony:hover { opacity: 1; }
+.oznaczenie-strony { top: 5px; right: 6px; }
+
+/* Tabele jak lista obserwowanych: równe wiersze, bez pionowych linii, podświetlenie wiersza. */
+body.t-strona .t-okno table { font-size: 12px; }
+body.t-strona .t-okno th, body.t-strona .t-okno td { padding: 4px 8px; }
+body.t-strona .t-okno th { font-size: 11px; font-weight: 500; background: var(--tlo-karty); }
+body.t-strona .t-okno tbody tr:hover > td { background: var(--wiersz-hover); }
+.zp-gesta th:not(:first-child), .zp-gesta td:not(:first-child) { text-align: right; }
+.zp-pl-lancuch th, .zp-pl-lancuch td { text-align: right; }
+.zp-pl-lancuch th.zp-pl-strike, .zp-pl-lancuch td.zp-pl-strike, .zp-pl-lancuch th.zp-pl-strona { text-align: center; }
+.zp-plus { color: var(--wzrost); }
+.zp-minus { color: var(--spadek); }
+
+/* Zakładki i przełączniki zakresów jak interwały w TradingView. */
+.zp-zakladka { padding: 4px 12px; font-size: 12px; border-radius: 4px; border-color: transparent; }
+.zp-zakladka.aktywna { background: var(--akcent-tlo); color: var(--akcent); border-color: transparent; font-weight: 600; }
+.zp-zakladka-plynnosc { border-style: solid; margin-left: 4px; }
+.zp-pl-przelaczniki button.aktywny { background: var(--akcent-tlo); color: var(--akcent); border-color: transparent; }
+
+/* Ikona „i”: opisy schowane za dymkiem (web/shared/dymki.js). */
+.zp-info, .t-pomoc {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: 15px; height: 15px; margin-left: 4px; padding: 0; line-height: 1;
+  font-size: 10px; font-weight: 700; font-style: normal; font-family: Georgia, "Times New Roman", serif;
+  color: var(--tekst-slaby); border: 1px solid var(--linia); border-radius: 50%; cursor: help; user-select: none;
+}
+.zp-info:hover, .t-pomoc:hover, .zp-info.dymek-aktywny { color: var(--akcent); border-color: var(--akcent); }
+.opis-schowany { display: none !important; }
+
+/* Dymek jak w TradingView: ciemny, mały, bez strzałki, pojawia się po krótkim opóźnieniu. */
+.dymek-tv {
+  position: fixed; z-index: 4000; max-width: 340px; padding: 6px 10px;
+  font-size: 12px; line-height: 1.45; white-space: pre-line;
+  background: var(--dymek-tlo); color: var(--dymek-tekst); border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35); pointer-events: none; opacity: 0; transition: opacity 0.1s ease;
+}
+.dymek-tv.widoczny { opacity: 1; }
+
+/* Szyna ikon po lewej (web/shared/sidebar.js): 52 px, nazwy w dymkach. */
+body.ma-sidebar { display: flex; align-items: flex-start; min-height: 100vh; }
+.sidebar {
+  flex: 0 0 52px; width: 52px; box-sizing: border-box; position: sticky; top: 0; height: 100vh; z-index: 30;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0;
+  background: var(--tlo-karty); border-right: 1px solid var(--linia); overflow: visible;
+}
+.sidebar-logo {
+  display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; margin: 2px 0 8px;
+  border-radius: 6px; background: var(--akcent); color: var(--akcent-tekst); font-size: 15px; font-weight: 700; text-decoration: none;
+}
+.sidebar ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.sidebar-glowne { flex: 1 1 auto; }
+.sidebar .sidebar-ikona {
+  position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0;
+  border: 0; border-radius: 6px; background: transparent; color: var(--tekst-slaby); text-decoration: none; cursor: pointer;
+}
+.sidebar .sidebar-ikona:hover { background: var(--wiersz-hover); color: var(--tekst); }
+.sidebar .sidebar-ikona.aktywna { color: var(--akcent); background: var(--akcent-tlo); }
+.sidebar .sidebar-ikona.aktywna::before { content: ""; position: absolute; left: -6px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: var(--akcent); }
+.sidebar-ikona svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.sidebar-dol { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.sidebar-grupa-wiersz { position: relative; }
+.sidebar-podmenu {
+  display: none; position: absolute; left: 100%; top: -4px; margin-left: 6px; min-width: 170px; padding: 4px;
+  background: var(--tlo-wyciszone); border: 1px solid var(--linia); border-radius: 6px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3); z-index: 60;
+}
+.sidebar-grupa-wiersz.otwarta .sidebar-podmenu { display: block; }
+.sidebar-podmenu::before { content: ""; position: absolute; left: -8px; top: 0; bottom: 0; width: 8px; }
+.sidebar-podmenu a {
+  display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 4px; color: var(--tekst); text-decoration: none; font-size: 13px; white-space: nowrap;
+}
+.sidebar-podmenu a:hover { background: var(--wiersz-hover); }
+.sidebar-podmenu a.aktywna { color: var(--akcent); background: var(--akcent-tlo); font-weight: 600; }
+.sidebar-podmenu svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+.sidebar-uklad-stan-kropka { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--blad); }
+.sidebar-uklad-stan-kropka[hidden] { display: none; }
+@media (max-width: 700px) {
+  body.ma-sidebar { display: block; }
+  .sidebar { position: sticky; top: 0; width: auto; height: 46px; flex-direction: row; padding: 3px 6px; border-right: 0; border-bottom: 1px solid var(--linia); gap: 2px; overflow-x: auto; overflow-y: hidden; }
+  .sidebar-logo { margin: 0 6px 0 0; }
+  .sidebar ul { flex-direction: row; }
+  .sidebar-glowne { flex: 0 0 auto; }
+  .sidebar-dol { flex-direction: row; margin-left: auto; }
+  .sidebar .sidebar-ikona.aktywna::before { left: 8px; right: 8px; top: auto; bottom: -3px; width: auto; height: 3px; border-radius: 3px 3px 0 0; }
+  .sidebar-grupa-wiersz { position: static; }
+  .sidebar-podmenu { position: fixed; left: 8px; top: 48px; margin: 0; }
+}
+@media (max-width: 700px) {
+  .sidebar-logo { display: none; }
+  .sidebar .sidebar-ikona { width: 36px; height: 36px; }
+  .sidebar-dol { gap: 0; }
+}
+@media (max-width: 900px) { #uklad-przywroc { display: none; } }
+/* Social na telefonie: pasek filtrów i nagłówki dni nie przyklejają się (nakładały się na wskaźniki). */
+@media (max-width: 900px) {
+  .so-pasek, .so-dzien-naglowek { position: static; }
+  body.t-strona .t-okno .so-uklad { display: block; }
+  /* Telefon: okno Social wypełnia całą wysokość ekranu (wspólny limit 60vh zostawiał pustą dolną część). */
+  body.t-strona .so-okno-social .t-tresc { max-height: none; height: calc(100vh - 38px); height: calc(100dvh - 38px); }
+}
+@media (max-width: 700px) {
+  /* Szyna nawigacji jest tu górnym paskiem 46 px, więc odejmujemy też jej wysokość. */
+  body.t-strona .so-okno-social .t-tresc { height: calc(100vh - 84px); height: calc(100dvh - 84px); }
+}
+
+/* Lektor kart Social: odsłuchiwanie postów (zadanie: lektor) */
+.so-lektor { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.so-lektor select { max-width: 220px; }
+.so-lektor-tempo { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; color: var(--tekst-slaby); }
+.so-lektor-tempo input[type="range"] { width: 90px; }
+.so-lektor-status { font-size: 12px; color: var(--tekst-slaby); flex: 1 1 200px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.so-post.so-czytany { border-color: var(--akcent); background: var(--akcent-tlo); }
+
+/* ===========================================================================
+   Social: przegląd rynku (zadanie 035). Pięć zwięzłych okien nad strumieniem:
+   kafelki wskaźników, zwinięte wiersze ze skrótem 10–30 słów, SWOT w pigułkach
+   (jak odznaki z ddd.png), mapa cieplna sektorów. Kolory tylko ze zmiennych
+   :root, jedna paleta dla całej karty: zielony dobrze dla indeksu, czerwony źle,
+   żółty ryzyko do obserwacji, niebieski szansa, szary neutralnie lub brak danych.
+   =========================================================================== */
+/* Układ według szkicu z opisu zadania: Sektory (8 kolumn) | Earnings (4 kolumny, dwa rzędy);
+   Wiadomości (4) | Makro (4); Podsumowanie (8) | Youtube (4); pod spodem dawny strumień (12). */
+@media (min-width: 901px) {
+  .t-siatka.sr-siatka { grid-template-rows: minmax(460px, 66vh) minmax(400px, 54vh) minmax(540px, 88vh); }
+  body.t-strona .t-siatka.sr-siatka > .t-okno.sr-okno-earnings { grid-row: span 2; }
+}
+.sr-okno { container-type: inline-size; --typ-E1: 205 80% 50%; --typ-E2: 150 60% 38%; --typ-E3: 35 90% 48%; --typ-E4: 275 55% 55%; --typ-Y1: 0 75% 52%; --typ-N1: 215 15% 50%; --typ-D1: 190 70% 42%; }
+body.t-strona .sr-okno .t-tresc { padding: 10px 12px; }
+.sr-k-zielony { --sr-kolor: var(--wzrost); }
+.sr-k-czerwony { --sr-kolor: var(--spadek); }
+.sr-k-zolty { --sr-kolor: var(--ostrzezenie); }
+.sr-k-niebieski { --sr-kolor: var(--akcent); }
+.sr-k-szary, .sr-k-brak { --sr-kolor: var(--tekst-slaby); }
+.sr-t-zielony { color: var(--wzrost); }
+.sr-t-czerwony { color: var(--spadek); }
+.sr-t-zolty { color: var(--ostrzezenie); }
+.sr-t-szary, .sr-slaby { color: var(--tekst-slaby); }
+.sr-okno .so-tresc { font-size: 13.5px; line-height: 1.55; }
+.sr-okno .so-tresc p { margin: 0 0 8px; }
+.sr-przelacznik { display: inline-flex; gap: 2px; }
+.sr-okno .t-akcje .t-mini.aktywny { background: var(--akcent-tlo); color: var(--akcent); border-color: var(--akcent); }
+.sr-tylko-nowe { display: inline-flex; flex-direction: row; align-items: center; gap: 4px; font-size: 11px; color: var(--tekst-slaby); white-space: nowrap; }
+.sr-tylko-nowe input[type="checkbox"] { width: 13px; height: 13px; margin: 0; padding: 0; }
+.sr-stan { font-size: 11px; color: var(--tekst-slaby); }
+.sr-pusto { margin: 6px 0; font-size: 12px; color: var(--tekst-slaby); }
+.sr-h3, body.t-strona .t-tresc .sr-h3 { margin: 0; font-size: 13px; font-weight: 700; }
+
+/* Kafelki wskaźników: nazwa, duża wartość w kolorze palety, jedna linia wyjaśnienia; reszta w dymku. */
+.sr-wskazniki { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-bottom: 10px; }
+.sr-wsk { position: relative; display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 7px 10px 7px 13px; border: 1px solid var(--linia); border-radius: 6px; background: var(--tlo-pola); cursor: help; }
+.sr-wsk::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 6px 0 0 6px; background: var(--sr-kolor); }
+.sr-wsk-nazwa { font-size: 11px; color: var(--tekst-slaby); }
+.sr-wsk-wartosc { font-size: 18px; font-weight: 700; color: var(--sr-kolor); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sr-k-szary .sr-wsk-wartosc { color: var(--tekst); }
+.sr-wsk-wartosc small { margin-left: 3px; font-size: 11px; font-weight: 500; color: var(--tekst-slaby); }
+.sr-wsk-pod { font-size: 11px; line-height: 1.35; color: var(--tekst-slaby); }
+/* Legenda kolorów (wykres raportów w oknie Earnings). */
+.sr-legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 10px 0 6px; font-size: 11px; color: var(--tekst-slaby); }
+.sr-legenda-poz i { display: inline-block; width: 10px; height: 10px; margin-right: 4px; border-radius: 2px; vertical-align: -1px; background: var(--sr-kolor); }
+
+/* Zwinięte wiersze: kropka nastroju, skrót, metadane; klik rozwija pełną treść. */
+.sr-dzien { margin: 12px 0 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--tekst-slaby); }
+.sr-wiersz { border-bottom: 1px solid var(--linia-subtelna); }
+.sr-wiersz-gora, body.t-strona .t-tresc .sr-wiersz-gora { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 8px; align-items: start; width: 100%; padding: 7px 4px; text-align: left; font: inherit; font-size: 13px; color: var(--tekst); background: none; border: 0; border-radius: 0; cursor: pointer; }
+.sr-wiersz-gora:hover { background: var(--wiersz-hover); }
+.sr-otwarty > .sr-wiersz-gora { background: var(--akcent-tlo); }
+.sr-kropka { display: block; width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; background: var(--sr-kolor); }
+.sr-kropka.sr-k-brak { background: transparent; border: 1px solid var(--tekst-slaby); box-sizing: border-box; }
+.sr-wiersz-tekst { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.sr-skrot { font-size: 13.5px; line-height: 1.45; }
+.sr-wiersz-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 11px; white-space: nowrap; color: var(--tekst-slaby); }
+.sr-typ { padding: 0 6px; border: 1px solid currentColor; border-radius: 999px; font-size: 10px; font-weight: 600; }
+.sr-typ.so-chip-E1 { color: hsl(var(--typ-E1)); }
+.sr-typ.so-chip-E2 { color: hsl(var(--typ-E2)); }
+.sr-typ.so-chip-E3 { color: hsl(var(--typ-E3)); }
+.sr-typ.so-chip-E4 { color: hsl(var(--typ-E4)); }
+.sr-typ.so-chip-Y1 { color: hsl(var(--typ-Y1)); }
+.sr-typ.so-chip-N1 { color: hsl(var(--typ-N1)); }
+.sr-typ.so-chip-D1 { color: hsl(var(--typ-D1)); }
+.sr-gw { letter-spacing: 1px; color: var(--akcent); }
+.sr-gw2 { opacity: 0.55; }
+.sr-przeczytany .sr-skrot, .sr-przeczytany .sr-spolka { color: var(--tekst-slaby); }
+.sr-przeczytany .sr-kropka { opacity: 0.45; }
+.sr-rozwiniecie { padding: 2px 8px 12px 22px; }
+.sr-tytul, body.t-strona .t-tresc .sr-tytul { margin: 8px 0 6px; font-size: 14px; font-weight: 700; line-height: 1.4; }
+.sr-zrodla { display: flex; flex-direction: column; gap: 3px; margin: 8px 0; font-size: 12px; }
+.sr-zrodlo { color: var(--akcent); text-decoration: none; }
+.sr-zrodlo:hover { text-decoration: underline; }
+.sr-przyciski { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.sr-wiecej { margin: 8px 0; }
+.sr-film-znak { font-size: 11px; color: var(--tekst-slaby); }
+.sr-fakt { margin: 6px 0; font-size: 12.5px; line-height: 1.5; }
+.sr-pelna { margin: 8px 0; }
+.sr-pelna > summary { font-size: 12px; color: var(--akcent); cursor: pointer; }
+.sr-pelna > .so-tresc { margin-top: 6px; }
+
+/* Wiadomości (zadanie 046): dzień po dniu; na górze dnia synteza (post D1, do 500 słów), pod nią
+   wpisy z trzech źródeł od ostatnio dodanego. Kolor etykiety to kolor typu D1 z .sr-okno. */
+.sr-dzien-grupa + .sr-dzien-grupa { margin-top: 18px; }
+.sr-dzien-naglowek { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 0 0 6px; padding-bottom: 4px; border-bottom: 1px solid var(--linia); }
+.sr-dzien-nazwa { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.sr-dzien-licznik { font-size: 11px; white-space: nowrap; color: var(--tekst-slaby); }
+.sr-synteza-dnia { margin: 0 0 6px; padding: 8px 10px; border: 1px solid var(--linia); border-left: 3px solid hsl(var(--typ-D1)); border-radius: 6px; background: var(--tlo-wyciszone); }
+.sr-synteza-dnia > summary { display: flex; flex-direction: column; gap: 4px; list-style: none; cursor: pointer; }
+.sr-synteza-dnia > summary::-webkit-details-marker { display: none; }
+.sr-synteza-gora { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.sr-synteza-etykieta { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: hsl(var(--typ-D1)); }
+.sr-synteza-meta { font-size: 11px; color: var(--tekst-slaby); }
+.sr-synteza-akcja { margin-left: auto; font-size: 11px; color: var(--akcent); }
+.sr-synteza-akcja::after { content: "czytaj całość ▸"; }
+.sr-synteza-dnia[open] .sr-synteza-akcja::after { content: "zwiń ▾"; }
+.sr-synteza-lead { display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 8px; align-items: start; }
+.sr-synteza-pelna { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--linia-subtelna); }
+.sr-synteza-pelna .so-tresc ul { margin: 0 0 8px; padding-left: 18px; }
+.sr-synteza-pelna .so-tresc li { margin: 0 0 6px; }
+.sr-synteza-dnia.sr-przeczytany .sr-skrot { color: var(--tekst-slaby); }
+.sr-synteza-dnia.sr-przeczytany .sr-kropka { opacity: 0.45; }
+
+/* Synteza dnia jako skrypt shorta (zadanie 047): propozycja tytułu i opisu, lista „do sprawdzenia przed nagraniem”,
+   przycisk „Dodaj jako short do Studio” (po dodaniu link do projektu) i znacznik „w Studio” w nagłówku syntezy. */
+.sr-short-znacznik { font-size: 11px; font-weight: 600; color: var(--dobrze); }
+.sr-short-znacznik:empty { display: none; }
+.sr-short-za { margin-left: 4px; padding: 0 5px; border: 1px solid var(--ostrzezenie); border-radius: 999px; font-size: 10px; color: var(--ostrzezenie); }
+.sr-short-propozycja { display: grid; gap: 6px; margin: 0 0 10px; padding: 8px 10px; border: 1px solid var(--linia-subtelna); border-radius: 6px; background: var(--tlo-karty); }
+.sr-short-pole { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 8px; align-items: baseline; font-size: 12.5px; line-height: 1.45; }
+.sr-short-etykieta { font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--tekst-slaby); }
+.sr-short-tytul { font-size: 13.5px; line-height: 1.35; }
+.sr-short-uwaga { font-size: 11.5px; line-height: 1.45; color: var(--tekst-slaby); }
+.sr-short-sprawdz { margin: 8px 0 0; padding: 6px 10px; border-left: 3px solid var(--ostrzezenie); background: var(--tlo-karty); font-size: 12.5px; line-height: 1.45; }
+.sr-short-sprawdz ul { margin: 4px 0 0; padding-left: 18px; }
+.sr-short-akcja { display: contents; }
+.sr-short-ok { align-self: center; font-size: 12px; font-weight: 600; color: var(--dobrze); }
+.sr-short-link { color: var(--akcent); text-decoration: none; }
+.sr-short-dodaj:disabled { opacity: 0.6; cursor: progress; }
+.sr-short-komunikat:empty { display: none; }
+.sr-short-blad { display: block; margin-top: 6px; font-size: 12px; line-height: 1.45; color: var(--blad); }
+
+/* Earnings: wiersz spółki z wagą i odznakami, wykres raportów dzień po dniu, pigułka sezonu. */
+.sr-spolka { font-size: 12px; }
+.sr-spolka b { font-size: 13px; }
+.sr-waga { font-size: 11px; font-variant-numeric: tabular-nums; color: var(--tekst-slaby); }
+.sr-odznaki { display: flex; flex-wrap: wrap; gap: 4px; }
+.sr-odznaki:empty { display: none; }
+.sr-odz { padding: 0 7px; border: 1px solid currentColor; border-radius: 999px; font-size: 11px; line-height: 18px; white-space: nowrap; }
+.sr-e-dni { margin: 4px 0 10px; }
+.sr-e-dni-gora { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+.sr-e-dni-gora .sr-legenda { margin: 0; }
+.sr-e-slupki { display: flex; align-items: flex-end; gap: 2px; height: 116px; padding: 0 2px; overflow-x: auto; border-bottom: 1px solid var(--linia); }
+.sr-dzien-slupek, body.t-strona .t-tresc button.sr-dzien-slupek { display: flex; flex: 1 0 15px; flex-direction: column; align-items: center; justify-content: flex-end; max-width: 46px; height: 100%; padding: 0; color: var(--tekst-slaby); background: none; border: 0; border-radius: 0; cursor: pointer; }
+.sr-slupek-kolumna { display: flex; flex-direction: column-reverse; width: 70%; height: 78px; }
+.sr-slupek-kolumna i { display: block; width: 100%; }
+.sr-s-wzrost { background: var(--wzrost); }
+.sr-s-spadek { background: var(--spadek); }
+.sr-s-brak { background: var(--linia); }
+.sr-slupek-licznik { font-size: 10px; font-variant-numeric: tabular-nums; }
+.sr-slupek-data { margin-top: 2px; font-size: 9px; white-space: nowrap; }
+.sr-dzien-slupek:hover .sr-slupek-kolumna { opacity: 0.8; }
+.sr-dzien-slupek.aktywny .sr-slupek-kolumna { outline: 2px solid var(--akcent); outline-offset: 1px; }
+.sr-dzien-slupek.aktywny .sr-slupek-data { font-weight: 700; color: var(--akcent); }
+.sr-e-wybrany { margin-top: 6px; font-size: 12px; }
+.sr-pigulka { margin: 8px 0 10px; padding: 8px 10px; border: 1px solid var(--linia); border-radius: 6px; background: var(--tlo-wyciszone); }
+.sr-pigulka > summary { display: flex; flex-direction: column; gap: 4px; list-style: none; cursor: pointer; }
+.sr-pigulka > summary::-webkit-details-marker { display: none; }
+.sr-pigulka-tytul { font-size: 13px; font-weight: 700; }
+.sr-pigulka-tytul .sr-kropka { display: inline-block; margin: 0 4px 1px 0; vertical-align: middle; }
+.sr-pigulka-lead { font-size: 13px; line-height: 1.5; }
+.sr-pigulka[open] .sr-stan { display: none; }
+.sr-pigulka > .so-tresc { margin-top: 8px; }
+.sr-kolejne-lista { margin: 0 0 6px; padding-left: 16px; font-size: 12.5px; line-height: 1.6; }
+
+/* SWOT w pigułkach: zielone mocne, czerwone słabe, niebieskie szanse, żółte zagrożenia. */
+.sr-swot { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
+@media (max-width: 600px) { .sr-swot { grid-template-columns: 1fr; } }
+.sr-swot-grupa { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 5px; padding: 8px; border: 1px solid color-mix(in srgb, var(--sr-kolor) 35%, transparent); border-radius: 6px; background: color-mix(in srgb, var(--sr-kolor) 6%, transparent); }
+.sr-swot-nazwa { flex: 0 0 100%; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--sr-kolor); }
+.sr-pig { display: inline-block; padding: 3px 10px; border: 1px solid var(--sr-kolor); border-radius: 999px; font-size: 12px; font-weight: 500; line-height: 1.4; color: var(--sr-kolor); background: color-mix(in srgb, var(--sr-kolor) 8%, var(--tlo-pola)); }
+.sr-pig a { margin-left: 4px; font-size: 10.5px; font-weight: 400; white-space: nowrap; color: var(--tekst-slaby); text-decoration: underline dotted; }
+.sr-pig a:hover { color: var(--akcent); }
+
+/* Mapa cieplna: rozmiar = waga w indeksie, kolor = zmiana; klik schodzi do branż i spółek. */
+.sr-okruszki { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px; margin: 4px 0 6px; font-size: 12px; }
+.sr-okr, body.t-strona .t-tresc button.sr-okr { padding: 0; font: inherit; font-size: 12px; color: var(--akcent); background: none; border: 0; cursor: pointer; }
+span.sr-okr { font-weight: 600; color: var(--tekst); cursor: default; }
+.sr-okr-sep { color: var(--tekst-slaby); }
+.sr-okr-info { margin-left: auto; font-size: 11px; }
+.sr-mapa { position: relative; height: 360px; overflow: hidden; border-radius: 4px; background: var(--tlo); }
+.sr-mapa-grupa { position: absolute; box-sizing: border-box; border: 1px solid var(--tlo-karty); background: var(--tlo-wyciszone); cursor: zoom-in; }
+.sr-mapa-etykieta { position: absolute; top: 1px; left: 4px; right: 4px; overflow: hidden; font-size: 10.5px; font-weight: 700; white-space: nowrap; text-overflow: ellipsis; color: var(--tekst); }
+.sr-mapa-etykieta b { margin-left: 4px; font-weight: 600; color: var(--tekst-slaby); }
+.sr-kafel { position: absolute; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; font-size: 10px; line-height: 1.15; text-align: center; color: var(--tekst); cursor: zoom-in; }
+.sr-kafel b { font-size: 11px; }
+.sr-kafel span { font-size: 10px; }
+.sr-kafel.sr-jasny { color: var(--akcent-tekst); }
+.sr-kafel:hover { z-index: 1; outline: 1px solid var(--tekst); outline-offset: -1px; }
+.sr-mapa-legenda { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0 4px; font-size: 11px; color: var(--tekst-slaby); }
+.sr-gradient { width: 120px; height: 8px; border-radius: 2px; background: linear-gradient(90deg, var(--spadek), var(--tlo-pola), var(--wzrost)); }
+
+@media (max-width: 900px) {
+  body.t-strona .sr-okno .t-tresc { max-height: 80vh; }
+  .sr-mapa { height: 300px; }
+  .sr-wiersz-gora, body.t-strona .t-tresc .sr-wiersz-gora { grid-template-columns: 10px minmax(0, 1fr); }
+  .sr-wiersz-meta { grid-column: 2; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px; }
+}
+/* Wąskie okna (Earnings, Wiadomości, a także każde zwężone uchwytem):
+   gęstsze kafelki wskaźników i SWOT w jednej kolumnie. Blok stoi na końcu, żeby wygrywał
+   z regułami ogólnymi o tej samej szczegółowości. */
+@container (max-width: 560px) {
+  .sr-wskazniki { grid-template-columns: repeat(auto-fit, minmax(122px, 1fr)); gap: 6px; }
+  .sr-wsk { padding: 6px 8px 6px 11px; }
+  .sr-wsk-wartosc { font-size: 16px; }
+  .sr-swot { grid-template-columns: 1fr; }
+}
+
+/* ===========================================================================
+   Przestrzeń robocza: wspólny moduł web/shared/przestrzen.js (zadanie 041, wydzielony
+   z karty Social, zadanie 035, runda 2). Karty Social, Stan rynku i Pozycja: użytkownik
+   dodaje okna z zakładkami (każda zakładka to jeden element karty), zmienia im rozmiar
+   i kolejność. Własny układ (siatka 12 kolumn, wysokość w pikselach), niezależny od
+   okna.js. Kolory tylko ze zmiennych :root.
+   =========================================================================== */
+.prz-karta { padding: 0 0 24px; }
+.prz-pasek { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 6px 34px 6px 34px; border-bottom: 1px solid var(--linia); background: var(--tlo-wyciszone); }
+.prz-pasek .prz-dodaj { color: var(--akcent-tekst); background: var(--akcent); border-color: var(--akcent); font-weight: 600; }
+.prz-pasek .prz-dodaj:hover { background: var(--akcent-hover); }
+.prz-pasek-prawo { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; }
+.prz-przestrzen { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 8px; align-items: start; padding: 8px; }
+.prz-magazyn[hidden] { display: none; }
+.prz-pusty-ekran { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12vh 16px; text-align: center; color: var(--tekst-slaby); border: 1px dashed var(--linia); border-radius: 6px; }
+.prz-pusty-ekran h2, body.t-strona .prz-pusty-ekran h2 { margin: 0; font-size: 18px; color: var(--tekst); }
+.prz-pusty-ekran p { max-width: 520px; margin: 0; font-size: 13px; line-height: 1.5; }
+.prz-szybkie { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.prz-panel { position: relative; display: flex; flex-direction: column; min-width: 0; overflow: hidden; padding: 0; background: var(--tlo-karty); border: 1px solid var(--linia); border-radius: 6px; box-shadow: none; }
+.prz-panel.prz-przeciagany { opacity: 0.6; outline: 2px solid var(--akcent); outline-offset: -2px; }
+.prz-panel-gora { display: flex; align-items: stretch; justify-content: space-between; gap: 6px; flex: 0 0 auto; min-height: 30px; padding: 0 4px 0 0; background: var(--tlo-wyciszone); border-bottom: 1px solid var(--linia); cursor: grab; }
+.prz-karty { display: flex; align-items: stretch; flex: 1 1 auto; min-width: 0; overflow-x: auto; }
+.prz-tab { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; padding: 0 8px 0 10px; font: inherit; font-size: 12px; font-weight: 500; color: var(--tekst-slaby); background: none; border: 0; border-right: 1px solid var(--linia); border-bottom: 2px solid transparent; border-radius: 0; cursor: pointer; }
+.prz-tab:hover { color: var(--tekst); background: var(--wiersz-hover); }
+.prz-tab.aktywna { color: var(--tekst); background: var(--tlo-karty); border-bottom-color: var(--akcent); font-weight: 600; }
+.prz-nr { display: inline-block; min-width: 16px; padding: 0 4px; font-size: 10px; font-weight: 600; text-align: center; color: var(--tekst-slaby); border: 1px solid var(--linia); border-radius: 3px; }
+.prz-x { margin-left: 2px; padding: 0 3px; font-size: 14px; line-height: 1; color: var(--tekst-slaby); border-radius: 3px; }
+.prz-x:hover { color: var(--spadek); background: var(--akcent-tlo); }
+.prz-panel-akcje { display: flex; align-items: center; gap: 4px; flex: 0 0 auto; }
+.prz-panel-akcje [hidden] { display: none; }
+.prz-panel-tresc { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.prz-element { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; min-height: 0; margin: 0; }
+.prz-element[hidden] { display: none; }
+.prz-element > .t-naglowek { height: auto; min-height: 28px; padding: 3px 8px; justify-content: flex-end; flex-wrap: wrap; }
+.prz-uchwyt { position: absolute; z-index: 3; background: transparent; }
+.prz-uchwyt-p { top: 30px; right: 0; bottom: 8px; width: 6px; cursor: ew-resize; }
+.prz-uchwyt-d { left: 0; right: 8px; bottom: 0; height: 6px; cursor: ns-resize; }
+.prz-uchwyt-r { right: 0; bottom: 0; width: 12px; height: 12px; cursor: nwse-resize; }
+.prz-uchwyt-p:hover, .prz-uchwyt-d:hover { background: var(--akcent-tlo); }
+.prz-uchwyt-r::after { content: ""; position: absolute; right: 2px; bottom: 2px; width: 6px; height: 6px; border-right: 2px solid var(--tekst-slaby); border-bottom: 2px solid var(--tekst-slaby); }
+body.prz-zmiana { user-select: none; cursor: grabbing; }
+body.prz-zmiana iframe { pointer-events: none; }
+.prz-menu { position: fixed; z-index: 4500; display: flex; flex-direction: column; min-width: 260px; max-width: calc(100vw - 16px); padding: 4px; background: var(--tlo-karty); border: 1px solid var(--linia); border-radius: 6px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35); }
+.prz-menu button, body.t-strona .prz-menu button { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; width: 100%; padding: 6px 8px; font: inherit; text-align: left; color: var(--tekst); background: none; border: 0; border-radius: 4px; cursor: pointer; }
+.prz-menu button:hover, body.t-strona .prz-menu button:hover { background: var(--akcent-tlo); }
+.prz-menu b { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.prz-menu button > span { padding-left: 28px; font-size: 11px; color: var(--tekst-slaby); }
+.prz-pusto { margin: 6px 8px; font-size: 12px; color: var(--tekst-slaby); }
+.prz-toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 1100; padding: 10px 18px; border-radius: 999px; background: var(--tekst); color: var(--tlo); font-size: 14px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4); max-width: 90vw; }
+@media (max-width: 900px) {
+  .prz-przestrzen { grid-template-columns: 1fr; }
+  .prz-panel { grid-column: 1 / -1 !important; height: auto !important; min-height: 280px; }
+  .prz-panel-tresc { max-height: 85vh; }
+  .prz-uchwyt { display: none; }
+  .prz-panel-gora { cursor: default; }
+  .prz-pasek { padding-left: 8px; padding-right: 8px; }
+}
+
+/* ===========================================================================
+   Karta „Pozycja" (zadanie 036): profile pozycji, wskaźniki rynku opcji,
+   propozycje zakładów, wykres wypłaty, tabela zakładów i otwarte pozycje.
+   Prefiks pz-. Kolory tylko ze zmiennych :root (motyw Dzień i Noc).
+   =========================================================================== */
+.pz-dobrze { --pz-kolor: var(--wzrost); }
+.pz-uwaga { --pz-kolor: var(--ostrzezenie); }
+.pz-zle { --pz-kolor: var(--spadek); }
+.pz-info, .pz-brak { --pz-kolor: var(--tekst-slaby); }
+.pz-plus { color: var(--wzrost); }
+.pz-minus { color: var(--spadek); }
+.pz-pusto { padding: 14px 6px; font-size: 12px; line-height: 1.5; text-align: center; color: var(--tekst-slaby); }
+.pz-czas { font-size: 11px; font-weight: 500; color: var(--tekst-slaby); white-space: nowrap; }
+
+/* okno 1: profile, podsumowanie, parametry */
+.pz-profile { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+body.t-strona .t-tresc button.pz-profil { padding: 2px 10px; font-size: 12px; font-weight: 500; color: var(--tekst); background: var(--tlo-pola); border: 1px solid var(--linia); border-radius: 999px; }
+body.t-strona .t-tresc button.pz-profil:hover { border-color: var(--akcent); }
+body.t-strona .t-tresc button.pz-profil.aktywny { color: var(--akcent-tekst); background: var(--akcent); border-color: var(--akcent); font-weight: 600; }
+body.t-strona .t-tresc button.pz-profil-nowy { padding: 2px 9px; font-weight: 700; }
+.pz-podsumowanie { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; margin-bottom: 6px; }
+.pz-pole-sum { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.pz-pole-sum > span { font-size: 11px; color: var(--tekst-slaby); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pz-pole-sum > b { font-size: 16px; font-variant-numeric: tabular-nums; }
+.pz-pole-sum > small { font-size: 11px; color: var(--tekst-slaby); font-variant-numeric: tabular-nums; }
+.pz-pole-sum > small.pz-plus { color: var(--wzrost); }
+.pz-pole-sum > small.pz-minus { color: var(--spadek); }
+.pz-parametry { margin: 4px 0; padding-top: 4px; border-top: 1px solid var(--linia-subtelna); }
+.pz-parametry > summary { padding: 2px 0; font-size: 12px; font-weight: 600; color: var(--tekst-slaby); cursor: pointer; }
+.pz-formularz { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 8px; margin: 6px 0; }
+body.t-strona .t-tresc .pz-formularz label { gap: 2px; min-width: 0; }
+body.t-strona .t-tresc .pz-formularz input { width: 100%; box-sizing: border-box; }
+.pz-profil-akcje { display: flex; justify-content: flex-end; }
+.pz-token { display: flex; gap: 6px; margin: 6px 0; }
+.pz-token[hidden] { display: none; }
+body.t-strona .t-tresc .pz-token input { flex: 1 1 auto; min-width: 0; }
+.pz-stan { margin: 4px 0 0; font-size: 11px; line-height: 1.4; color: var(--tekst-slaby); }
+.pz-stan:empty { display: none; }
+.pz-stan.blad { color: var(--blad); }
+
+/* okno 2: barometr i kafelki wskaźników */
+.pz-barometr { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 0 0 8px; padding: 5px 10px; font-size: 12px; border-left: 3px solid var(--pz-kolor); border-radius: 4px; background: color-mix(in srgb, var(--pz-kolor) 10%, transparent); cursor: help; }
+.pz-barometr:empty { display: none; }
+.pz-barometr > span { color: var(--tekst-slaby); }
+.pz-segmenty { display: inline-flex; gap: 3px; margin-left: auto; }
+.pz-barometr .pz-segmenty i { display: block; width: 18px; height: 8px; border-radius: 2px; background: var(--pz-kolor); }
+.pz-wskazniki { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.pz-wsk { position: relative; display: flex; flex-direction: column; gap: 1px; min-width: 0; padding: 6px 8px 6px 11px; border: 1px solid var(--linia); border-radius: 6px; background: var(--tlo-pola); cursor: help; }
+.pz-wsk::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 6px 0 0 6px; background: var(--pz-kolor); }
+.pz-wsk-nazwa { font-size: 11px; color: var(--tekst-slaby); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pz-wsk-nazwa b { margin-right: 3px; font-weight: 700; }
+.pz-wsk-wartosc { font-size: 16px; font-weight: 700; color: var(--pz-kolor); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pz-info .pz-wsk-wartosc { color: var(--tekst); }
+.pz-brak .pz-wsk-wartosc { font-size: 13px; font-weight: 500; color: var(--tekst-slaby); }
+.pz-wsk-pod { font-size: 11px; line-height: 1.35; color: var(--tekst-slaby); }
+
+/* okno 3: propozycje */
+.pz-propozycje { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.pz-prop { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding: 8px 10px; border: 1px solid var(--linia); border-radius: 6px; background: var(--tlo-pola); cursor: pointer; }
+.pz-prop:hover { border-color: var(--akcent); }
+.pz-prop.wybrana { border-color: var(--akcent); box-shadow: 0 0 0 1px var(--akcent); }
+.pz-prop > header { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.pz-prop-rodzaj { font-size: 11px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: var(--tekst-slaby); }
+.pz-ocena { padding: 1px 8px; font-size: 12px; font-weight: 700; border-radius: 999px; color: var(--pz-kolor); background: color-mix(in srgb, var(--pz-kolor) 14%, transparent); }
+.pz-prop-zaklad { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.pz-prop-zaklad small { margin-left: 6px; font-size: 12px; font-weight: 500; color: var(--tekst-slaby); }
+.pz-prop-liczby { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 8px; margin: 0; }
+.pz-prop-liczby > div { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.pz-prop-liczby dt { font-size: 10px; color: var(--tekst-slaby); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pz-prop-liczby dd { margin: 0; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pz-kryteria { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 4px 0 0; list-style: none; font-size: 11px; border-top: 1px solid var(--linia-subtelna); }
+.pz-kryteria li { display: flex; align-items: baseline; gap: 6px; }
+.pz-kryteria li > span { flex: 0 0 24px; font-weight: 700; text-align: center; }
+.pz-kryteria li.tak > span { color: var(--wzrost); }
+.pz-kryteria li.nie { color: var(--tekst-slaby); }
+.pz-kryteria li.nie > span { color: var(--spadek); }
+.pz-kryteria small { margin-left: auto; padding-left: 6px; color: var(--tekst-slaby); white-space: nowrap; }
+.pz-prop-akcje { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 2px; }
+body.t-strona .t-tresc .pz-prop-akcje button.t-mini { padding: 2px 8px; font-size: 11px; }
+body.t-strona .t-tresc button.t-mini.pz-mocny { color: var(--akcent-tekst); background: var(--akcent); border-color: var(--akcent); }
+
+/* okno 4: wykres wypłaty (SVG) */
+.pz-wykres { position: relative; min-height: 120px; }
+.pz-svg { display: block; width: 100%; height: auto; }
+.pz-svg-siatka { stroke: var(--linia-subtelna); stroke-width: 1; }
+.pz-svg-siatka.zero { stroke: var(--linia); }
+.pz-svg-opis { font-size: 10px; fill: var(--tekst-slaby); font-variant-numeric: tabular-nums; }
+.pz-svg-panel { font-size: 10px; font-weight: 600; fill: var(--tekst-slaby); }
+.pz-svg-sigma { fill: color-mix(in srgb, var(--akcent) 7%, transparent); }
+.pz-svg-etf { fill: none; stroke: var(--tekst-slaby); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.pz-svg-razem { fill: none; stroke: var(--akcent); stroke-width: 2; }
+.pz-svg-spread { fill: none; stroke: var(--tekst); stroke-width: 1.5; }
+.pz-svg-pole-plus { fill: color-mix(in srgb, var(--wzrost) 30%, transparent); }
+.pz-svg-pole-minus { fill: color-mix(in srgb, var(--spadek) 30%, transparent); }
+.pz-svg-cena { stroke: var(--tekst); stroke-width: 1; }
+.pz-svg-strike { stroke: var(--ostrzezenie); stroke-width: 1; stroke-dasharray: 3 3; }
+.pz-svg-prog { stroke: var(--spadek); stroke-width: 1.2; stroke-dasharray: 1 3; }
+.pz-svg-kursor { stroke: var(--tekst-slaby); stroke-width: 1; }
+.pz-wykres-dymek { position: absolute; top: 6px; z-index: 2; padding: 5px 8px; font-size: 11px; line-height: 1.45; color: var(--dymek-tekst); background: var(--dymek-tlo); border-radius: 4px; pointer-events: none; white-space: nowrap; }
+.pz-wykres-dymek[hidden] { display: none; }
+.pz-legenda { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 6px; font-size: 11px; color: var(--tekst-slaby); }
+.pz-leg { display: inline-block; width: 16px; height: 0; margin-right: 4px; vertical-align: middle; border-top: 2px solid var(--tekst); }
+.pz-leg-razem { border-top-color: var(--akcent); }
+.pz-leg-etf { border-top-style: dashed; border-top-color: var(--tekst-slaby); }
+.pz-leg-sigma { height: 8px; border: 0; background: color-mix(in srgb, var(--akcent) 14%, transparent); }
+.pz-wykres-liczby { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 12px; width: 100%; margin: 4px 0 0; color: var(--tekst); }
+.pz-wykres-liczby > div { display: flex; justify-content: space-between; gap: 6px; }
+.pz-wykres-liczby dt { color: var(--tekst-slaby); }
+.pz-wykres-liczby dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* okno 5: tabela zakładów */
+.pz-pasek { display: flex; flex: 0 0 auto; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 4px 8px; border-bottom: 1px solid var(--linia); background: var(--tlo-karty); }
+body.t-strona .pz-pasek label { flex-direction: row; align-items: center; gap: 6px; font-size: 11px; color: var(--tekst-slaby); }
+body.t-strona .pz-pasek select { padding: 2px 4px; font-size: 12px; border-radius: 2px; }
+body.t-strona .pz-tabela th.pz-sortowalny { cursor: pointer; user-select: none; }
+body.t-strona .pz-tabela th.pz-sortowany { color: var(--tekst); }
+body.t-strona .pz-tabela tbody tr { cursor: pointer; }
+body.t-strona .pz-tabela tr.pz-kandydat td:first-child { font-weight: 700; }
+body.t-strona .pz-tabela tr.pz-wybrany td { background: var(--akcent-tlo); }
+body.t-strona .pz-tabela td.pz-plus { color: var(--wzrost); }
+body.t-strona .pz-tabela td.pz-minus { color: var(--spadek); }
+
+/* okno 6: otwarte pozycje */
+.pz-otwarte-suma { margin-bottom: 4px; font-size: 12px; }
+.pz-otwarta { padding: 6px 0; border-bottom: 1px solid var(--linia-subtelna); }
+.pz-otwarta-gora { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+.pz-otwarta-gora b { font-size: 14px; font-variant-numeric: tabular-nums; }
+.pz-otwarta-gora small { font-size: 11px; color: var(--tekst-slaby); }
+.pz-otwarta-gora > span { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
+.pz-otwarta-liczby { margin: 2px 0 4px; font-size: 11px; line-height: 1.4; color: var(--tekst-slaby); }
+.pz-zamknij { display: flex; gap: 4px; }
+body.t-strona .t-tresc .pz-zamknij input { flex: 1 1 0; min-width: 0; padding: 2px 4px; font-size: 11px; }
+.pz-zamkniete { margin: 0; padding: 0; list-style: none; font-size: 12px; }
+.pz-zamkniete li { display: flex; align-items: baseline; gap: 8px; padding: 2px 0; }
+.pz-zamkniete li b { margin-left: auto; font-variant-numeric: tabular-nums; }
+.pz-zamkniete small { color: var(--tekst-slaby); }
+
+@media (max-width: 900px) {
+  .pz-propozycje { grid-template-columns: 1fr; }
+}
+
+/* ===========================================================================
+   Karta „Stan rynku" (zadanie 037): sygnał rynku, ocena dnia, wskaźniki makro,
+   rynku i techniki, historia sygnału, skuteczność i źródła danych. Prefiks st-.
+   Kolory tylko ze zmiennych :root (motyw Dzień i Noc).
+   =========================================================================== */
+/* Poziomy sygnału i stany wskaźników: kolor w zmiennej --st-kolor. */
+.st-p-silnie-pozytywny, .st-dobrze { --st-kolor: var(--wzrost); }
+.st-p-pozytywny { --st-kolor: color-mix(in srgb, var(--wzrost) 60%, var(--tekst-slaby)); }
+.st-p-neutralny, .st-neutralnie, .st-brak { --st-kolor: var(--tekst-slaby); }
+.st-p-negatywny, .st-uwaga { --st-kolor: var(--ostrzezenie); }
+.st-p-silnie-negatywny, .st-zle { --st-kolor: var(--spadek); }
+.st-info { --st-kolor: var(--linia); }
+.st-plus { color: var(--wzrost); }
+.st-minus { color: var(--spadek); }
+.st-czas { font-size: 11px; font-weight: 500; color: var(--tekst-slaby); white-space: nowrap; }
+.st-czas b { font-weight: 700; }
+.st-pusto { padding: 14px 6px; font-size: 12px; line-height: 1.5; text-align: center; color: var(--tekst-slaby); }
+.st-pusto.blad { color: var(--blad); }
+
+/* okno 1: sygnał rynku */
+.st-odznaka { display: flex; align-items: baseline; gap: 8px; padding: 6px 10px; border-left: 4px solid var(--st-kolor); border-radius: 4px; background: color-mix(in srgb, var(--st-kolor) 12%, transparent); }
+.st-odznaka > span { font-size: 17px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: var(--st-kolor); }
+.st-odznaka > b { margin-left: auto; font-size: 24px; font-variant-numeric: tabular-nums; }
+.st-odznaka > small { font-size: 11px; color: var(--tekst-slaby); }
+.st-skala-ramka { position: relative; margin: 10px 0 2px; }
+.st-skala { position: relative; height: 8px; overflow: hidden; border-radius: 4px; background: var(--linia-subtelna); }
+.st-pasmo { position: absolute; top: 0; bottom: 0; background: var(--st-kolor); opacity: 0.6; }
+.st-znacznik-skali, .st-nastroje-skala > i { position: absolute; top: -4px; width: 4px; height: 16px; margin-left: -2px; border-radius: 2px; background: var(--tekst); box-shadow: 0 0 0 2px var(--tlo-karty); }
+.st-skala-opis { display: flex; justify-content: space-between; font-size: 10px; color: var(--tekst-slaby); }
+.st-zmiany { margin: 6px 0; font-size: 12px; color: var(--tekst-slaby); }
+.st-zmiany b { font-variant-numeric: tabular-nums; }
+.st-historycznie { margin: 6px 0 8px; padding: 6px 8px; font-size: 12px; line-height: 1.45; border-radius: 4px; background: var(--tlo-wyciszone); cursor: help; }
+.st-grupy { display: flex; flex-direction: column; gap: 5px; margin: 6px 0 10px; }
+.st-grupa { display: grid; grid-template-columns: 64px minmax(0, 1fr) 34px; grid-template-areas: "n b w" "s s s"; align-items: center; gap: 0 8px; cursor: help; }
+.st-grupa-nazwa { grid-area: n; font-size: 12px; font-weight: 600; }
+.st-belka { grid-area: b; position: relative; height: 8px; border-radius: 4px; background: var(--linia-subtelna); }
+.st-belka::after { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--tekst-slaby); }
+.st-belka > i { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+.st-belka-plus { background: var(--wzrost); }
+.st-belka-minus { background: var(--spadek); }
+.st-grupa > b { grid-area: w; font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
+.st-grupa > small { grid-area: s; font-size: 10px; color: var(--tekst-slaby); }
+.st-nastroje { padding-top: 8px; border-top: 1px solid var(--linia-subtelna); cursor: help; }
+.st-nastroje-gora { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; font-size: 12px; }
+.st-nastroje-gora > span { font-weight: 600; }
+.st-nastroje-gora > small { margin-left: auto; font-size: 11px; color: var(--tekst-slaby); }
+.st-nastroje-skala { position: relative; height: 8px; margin: 6px 0 2px; border-radius: 4px; background: linear-gradient(90deg, var(--spadek), var(--ostrzezenie) 35%, var(--tekst-slaby) 50%, color-mix(in srgb, var(--wzrost) 60%, var(--tekst-slaby)) 65%, var(--wzrost)); }
+.st-n-skrajny-strach { color: var(--spadek); }
+.st-n-strach { color: var(--ostrzezenie); }
+.st-n-neutralnie { color: var(--tekst-slaby); }
+.st-n-chciwosc, .st-n-skrajna-chciwosc { color: var(--wzrost); }
+
+/* okno 2: ocena dnia */
+.st-ocena-gora { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.st-ocena-gora h3 { margin: 0; font-size: 15px; line-height: 1.3; }
+.st-odznaka-mala { display: inline-block; flex: 0 0 auto; padding: 1px 8px; font-size: 11px; font-weight: 700; white-space: nowrap; border-radius: 999px; color: var(--st-kolor); background: color-mix(in srgb, var(--st-kolor) 14%, transparent); }
+.st-roznica { margin: 0 0 8px; padding: 5px 8px; font-size: 12px; line-height: 1.45; border-left: 3px solid var(--ostrzezenie); background: color-mix(in srgb, var(--ostrzezenie) 8%, transparent); }
+.st-ocena-tekst p { margin: 0 0 8px; font-size: 13px; line-height: 1.55; }
+.st-za-przeciw { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; }
+.st-za-przeciw h4, .st-na-co h4 { margin: 4px 0; font-size: 11px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: var(--tekst-slaby); }
+.st-za h4 { color: var(--wzrost); }
+.st-przeciw h4 { color: var(--spadek); }
+.st-za-przeciw ul, .st-na-co ul, .st-auto { margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.5; }
+.st-za-przeciw li, .st-na-co li, .st-auto li { margin-bottom: 3px; }
+.st-na-co { margin-top: 6px; }
+.st-uwaga-stara { margin-bottom: 8px; padding: 5px 8px; font-size: 12px; line-height: 1.45; color: var(--tekst-slaby); border-left: 3px solid var(--linia); background: var(--tlo-wyciszone); }
+.st-archiwum, .st-auto-szczegoly { margin-top: 10px; padding-top: 6px; font-size: 12px; border-top: 1px solid var(--linia-subtelna); }
+.st-archiwum > summary, .st-auto-szczegoly > summary { font-weight: 600; color: var(--tekst-slaby); cursor: pointer; }
+.st-archiwum-wpis { margin: 4px 0 0 8px; }
+.st-archiwum-wpis > summary { cursor: pointer; }
+.st-archiwum-wpis > summary b { margin: 0 6px; font-variant-numeric: tabular-nums; }
+.st-archiwum-wpis p { margin: 4px 0; line-height: 1.5; }
+
+/* okna 3–5: wiersze wskaźników */
+.st-tresc-lista { padding: 0; }
+.st-wiersz { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto 26px 56px; grid-template-areas: "n w p i" "o o o o"; align-items: center; gap: 0 6px; padding: 4px 8px 4px 11px; border-bottom: 1px solid var(--linia-subtelna); cursor: pointer; }
+.st-wiersz::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--st-kolor); }
+.st-wiersz:hover { background: var(--wiersz-hover); }
+.st-wiersz.otwarty { background: var(--akcent-tlo); }
+.st-wiersz:focus-visible { outline: 1px solid var(--akcent); outline-offset: -1px; }
+.st-nazwa { grid-area: n; min-width: 0; overflow: hidden; font-size: 12px; white-space: nowrap; text-overflow: ellipsis; }
+.st-wartosc { grid-area: w; font-size: 13px; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--st-kolor); }
+.st-info .st-wartosc, .st-neutralnie .st-wartosc { color: var(--tekst); }
+.st-brak .st-wartosc { font-weight: 500; color: var(--tekst-slaby); }
+.st-pkt { grid-area: p; padding: 0 2px; font-size: 11px; font-weight: 700; text-align: center; border-radius: 3px; font-variant-numeric: tabular-nums; color: var(--st-kolor); background: color-mix(in srgb, var(--st-kolor) 14%, transparent); }
+.st-neutralnie .st-pkt { color: var(--tekst-slaby); }
+.st-pkt-info { font-weight: 500; font-style: italic; color: var(--tekst-slaby); background: transparent; }
+.st-iskra { grid-area: i; height: 20px; }
+.st-iskra-svg { display: block; width: 100%; height: 100%; }
+.st-iskra-svg polyline { fill: none; stroke: var(--tekst-slaby); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+.st-pod { grid-area: o; min-width: 0; overflow: hidden; font-size: 11px; line-height: 1.35; white-space: nowrap; text-overflow: ellipsis; color: var(--tekst-slaby); }
+.st-data { opacity: 0.85; }
+.st-podzial { padding: 6px 8px 3px; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--tekst-slaby); background: var(--tlo-wyciszone); border-bottom: 1px solid var(--linia-subtelna); }
+.st-szczegoly { padding: 6px 10px 10px 11px; font-size: 12px; line-height: 1.5; border-bottom: 1px solid var(--linia); background: var(--tlo-wyciszone); cursor: auto; }
+.st-opis-tekst { margin-bottom: 6px; }
+.st-fakty { display: grid; gap: 2px; margin: 0 0 6px; }
+.st-fakty > div { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 8px; }
+.st-fakty dt { color: var(--tekst-slaby); }
+.st-fakty dd { margin: 0; }
+.st-wykres-maly { margin: 4px 0; }
+body.t-strona .st-szczegoly table.st-hist { margin-top: 4px; font-size: 11px; }
+body.t-strona .st-szczegoly table.st-hist th,
+body.t-strona .st-szczegoly table.st-hist td { position: static; padding: 1px 4px; font-size: 11px; background: transparent; }
+body.t-strona .st-szczegoly table.st-hist tr.st-biezacy td { font-weight: 700; background: var(--akcent-tlo); }
+.st-przypis { margin-top: 2px; font-size: 10px; line-height: 1.4; color: var(--tekst-slaby); }
+
+/* wykresy SVG: okno 6 i rozwinięcie wskaźnika */
+.st-svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
+.st-svg-siatka { stroke: var(--linia-subtelna); stroke-width: 1; }
+.st-svg-zero { stroke: var(--linia); stroke-width: 1; }
+.st-svg-opis { font-size: 10px; fill: var(--tekst-slaby); font-variant-numeric: tabular-nums; }
+.st-svg-panel { font-size: 11px; font-weight: 600; fill: var(--tekst-slaby); }
+.st-svg-linia { fill: none; stroke: var(--akcent); stroke-width: 1.5; }
+.st-svg-kropka { fill: var(--akcent); }
+.st-svg-kursor { stroke: var(--tekst-slaby); stroke-width: 1; stroke-dasharray: 3 3; }
+.st-wykres { position: relative; }
+.st-linia-spx { fill: none; stroke: var(--tekst); stroke-width: 1.4; }
+.st-linia-wyniku { fill: none; stroke: var(--tekst); stroke-width: 1.6; }
+.st-linia-nastrojow { fill: none; stroke: var(--akcent); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.st-linia-grupy { fill: none; stroke-width: 1.1; opacity: 0.9; }
+.st-l-makro { stroke: var(--ozn-bursztyn); }
+.st-l-rynek { stroke: var(--znacznik-aistudio); }
+.st-l-technika { stroke: var(--dobrze); }
+.st-f-silnie-pozytywny { fill: var(--wzrost); }
+.st-f-pozytywny { fill: color-mix(in srgb, var(--wzrost) 55%, var(--tlo-karty)); }
+.st-f-neutralny { fill: var(--linia); }
+.st-f-negatywny { fill: var(--ostrzezenie); }
+.st-f-silnie-negatywny { fill: var(--spadek); }
+.st-pasmo-tla { opacity: 0.13; }
+.st-wykres-dymek { position: absolute; top: 8px; z-index: 2; padding: 5px 8px; font-size: 11px; line-height: 1.45; white-space: nowrap; color: var(--dymek-tekst); background: var(--dymek-tlo); border-radius: 4px; pointer-events: none; }
+.st-wykres-dymek[hidden] { display: none; }
+.st-legenda { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; margin-top: 6px; font-size: 11px; color: var(--tekst-slaby); }
+.st-leg { display: inline-block; width: 16px; height: 0; margin-right: 4px; vertical-align: middle; border-top: 2px solid var(--tekst); }
+.st-leg-nastroje { border-top: 2px dashed var(--akcent); }
+.st-leg.st-l-makro { border-top-color: var(--ozn-bursztyn); }
+.st-leg.st-l-rynek { border-top-color: var(--znacznik-aistudio); }
+.st-leg.st-l-technika { border-top-color: var(--dobrze); }
+.st-przelacznik { display: inline-flex; gap: 2px; }
+body.t-strona .t-akcje .st-przelacznik > button.t-mini.aktywny { color: var(--akcent-tekst); background: var(--akcent); border-color: var(--akcent); }
+.st-check, body.t-strona .t-akcje label.st-check { display: inline-flex; flex-direction: row; align-items: center; gap: 3px; margin: 0; font-size: 11px; white-space: nowrap; color: var(--tekst-slaby); cursor: pointer; }
+.st-check input { width: 12px; height: 12px; margin: 0; }
+.st-wybor { padding: 0 4px; font-size: 11px; border-radius: 2px; }
+
+/* okno 7: skuteczność; okno 8: źródła */
+.st-tabela td small { margin-left: 6px; color: var(--tekst-slaby); }
+body.t-strona .t-okno table.st-tabela td:first-child { white-space: nowrap; }
+body.t-strona .t-okno table.st-tabela tr.st-biezacy td { font-weight: 600; background: var(--akcent-tlo); }
+body.t-strona .t-okno table.st-tabela tr.st-suma td { color: var(--tekst-slaby); }
+.st-kropka { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; background: var(--st-kolor); }
+.st-wniosek { padding: 6px 8px; font-size: 12px; line-height: 1.5; color: var(--tekst-slaby); }
+.st-zr-ok { color: var(--wzrost); }
+.st-zr-blad { font-weight: 600; color: var(--spadek); }
+.st-bledy { padding: 0 8px 8px; font-size: 12px; color: var(--blad); }
+.st-bledy:empty { display: none; }
+.st-bledy ul { margin: 4px 0 0; padding-left: 18px; }
+
+@media (max-width: 900px) {
+  .st-za-przeciw { grid-template-columns: 1fr; }
+}
+
+/* Studio: element Motywy (wybór stylu shorta dla projektu): siatka kart z podglądem ujęcia */
+.sd-motywy { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.sd-motyw { display: flex; flex-direction: column; gap: 8px; padding: 8px; border: 1px solid var(--linia); border-radius: 6px; background: var(--tlo-pola); }
+.sd-motyw.aktywny { border-color: var(--akcent); box-shadow: inset 0 0 0 1px var(--akcent); }
+.sd-motyw-mini { width: 100%; aspect-ratio: 9 / 16; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border: 1px solid var(--linia); border-radius: 10px; font-weight: 700; font-size: 18px; line-height: 1.1; text-decoration: none; }
+.sd-motyw-mini img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sd-motyw-mini small { font-size: 10px; font-weight: 400; opacity: .8; }
+.sd-motyw-opis { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.sd-motyw-glowa { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 13px; }
+.sd-motyw-opis button { margin-top: auto; align-self: flex-start; }
+.sd-motyw-opis p { margin: 4px 0; }
+
+/* Zadanie 043: opis zadania i notatnik karty edytowane w dymku i na liście. */
+.pu-opis-edytor textarea { width: 100%; box-sizing: border-box; min-height: 90px; resize: vertical; }
+.pu-opis-pasek { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.pu-opis-pasek button { padding: 4px 10px; }
+.pu-opis-w-dymku { margin: 4px 0 8px; }
+.pu-opis-edytor[hidden] { display: none; }
+.pu-dymek-opis, .pu-opis-przelacznik { flex: none; background: none; border: 0; color: var(--tekst-slaby); cursor: pointer; padding: 0 4px; font-size: 13px; }
+.pu-dymek-opis:hover, .pu-opis-przelacznik:hover { color: var(--akcent); }
+.pu-opis-w-liscie { margin: 0 0 8px 28px; }
+.pu-notatnik-wiersz { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-top: 1px solid var(--linia); }
+.z-uklad-prosty { grid-template-columns: minmax(0, 1fr); }
+[data-tylko-projekt][hidden] { display: none !important; }
+
+/* Notatnik karty: pomarańczowa ramka i plakietka (jeden na kartę, bez usuwania). */
+.pu-typ-notatnik { background: rgba(255, 159, 10, 0.2); color: #ff9f0a; font-weight: 600; letter-spacing: 0.04em; }
+.pu-wiersz-notatnik { border-left: 3px solid #ff9f0a; padding-left: 8px; }
+.pu-wiersz-notatnik .pu-wiersz-tytul { font-weight: 600; }
+.z-naglowek-notatnik { border-left: 3px solid #ff9f0a; padding-left: 12px; }
+
+/* Wersja poglądowa: stały pasek w prawym dolnym rogu każdej podstrony (web/shared/sidebar.js). */
+.baner-pogladowy { position: fixed; right: 12px; bottom: 12px; z-index: 900; display: flex; flex-direction: column; gap: 1px;
+  padding: 6px 11px; border: 1px solid var(--akcent); background: var(--tlo-karty); color: var(--tekst); font-size: 11px;
+  line-height: 1.3; text-decoration: none; }
+.baner-pogladowy strong { color: var(--akcent); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; }
+.baner-pogladowy span { color: var(--tekst-slaby); }
+.baner-pogladowy:hover { background: var(--akcent-tlo); }
+@media (max-width: 700px) { .baner-pogladowy { right: 8px; bottom: 8px; padding: 4px 8px; } .baner-pogladowy span { display: none; } }

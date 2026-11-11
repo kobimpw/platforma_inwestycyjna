@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Platforma inwestycyjna: wersja poglądowa</title>
+<meta name="description" content="Statyczna, poglądowa część platformy analitycznej dla inwestora indeksowego, przygotowana dla rekrutera. To nie jest pełnoprawna platforma." />
+<link rel="icon" href="data:," />
+<link rel="stylesheet" href="style.css" />
+<style>
+  /* Strona startowa wersji poglądowej: ręcznie pisana (nie jest generowana z src/), kolory wyłącznie ze zmiennych motywu. */
+  .start-glowna { max-width: 920px; margin: 0 auto; padding: 36px 20px 64px; }
+  .start-etykieta { margin: 0 0 6px; color: var(--akcent); font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .start-glowna h1 { margin: 0 0 12px; font-size: 28px; line-height: 1.2; }
+  .start-glowna h2 { margin: 0 0 8px; font-size: 17px; }
+  .start-lead { margin: 0 0 22px; max-width: 70ch; color: var(--tekst-slaby); font-size: 15px; line-height: 1.6; }
+  .start-uwaga { margin: 0 0 26px; padding: 16px 18px; border: 1px solid var(--akcent); border-left-width: 5px; background: var(--akcent-tlo); }
+  .start-uwaga p { margin: 0 0 8px; line-height: 1.6; }
+  .start-uwaga ul { margin: 6px 0 0; padding-left: 20px; line-height: 1.6; }
+  .start-teraz { margin: 0 0 26px; padding: 10px 14px; border: 1px solid var(--linia); background: var(--tlo-karty); color: var(--tekst-slaby); font-size: 13px; }
+  .start-teraz strong { color: var(--tekst); }
+  .start-karty { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin: 0 0 28px; }
+  .start-karta { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; border: 1px solid var(--linia); background: var(--tlo-karty); color: var(--tekst); text-decoration: none; }
+  .start-karta:hover { border-color: var(--akcent); }
+  .start-karta h3 { margin: 0; font-size: 16px; }
+  .start-karta p { margin: 0; color: var(--tekst-slaby); font-size: 13px; line-height: 1.55; }
+  .start-karta .start-przejdz { margin-top: auto; color: var(--akcent); font-weight: 600; font-size: 13px; }
+  .start-brak { margin: 0 0 24px; }
+  .start-brak ul { margin: 6px 0 0; padding-left: 20px; color: var(--tekst-slaby); line-height: 1.6; font-size: 14px; }
+  .start-stopka { padding-top: 14px; border-top: 1px solid var(--linia); color: var(--tekst-slaby); font-size: 12px; line-height: 1.6; }
+  .start-stopka a { color: var(--akcent); }
+</style>
+</head>
+<body class="start">
+<script>window.SIDEBAR_ROOT = "./";</script>
+<script src="shared/sidebar.js"></script>
+<main class="start-glowna">
+  <header>
+    <p class="start-etykieta">Wersja poglądowa dla rekrutera</p>
+    <h1>Platforma analityczna dla inwestora indeksowego</h1>
+    <p class="start-lead">Pełna platforma codziennie zbiera dane rynkowe z kilku źródeł, liczy z nich 54 wskaźniki i jeden sygnał rynku od -100 do +100, a wyniki pokazuje w przeglądarce jako zestaw kart. Ta strona to statyczny wycinek tego projektu.</p>
+  </header>
+
+  <section class="start-uwaga" id="o-wersji" role="note">
+    <h2>To nie jest pełnoprawna platforma</h2>
+    <p>To statyczna, poglądowa część projektu, przygotowana dla rekrutera, żeby można było zobaczyć, jak wygląda i jak działa interfejs. Pełna platforma jest prywatna: pobiera dane na żywo, ma bramkę logowania i zapisuje ustawienia użytkownika w repozytorium. Tutaj jest tylko to, co da się pokazać bez serwera.</p>
+    <ul>
+      <li>Dane są zamrożone: to migawka z jednej sesji giełdowej, nic się tu nie odświeża.</li>
+      <li>Nie ma zapisu: układ okien zapamiętuje wyłącznie Twoja przeglądarka.</li>
+      <li>Pozostałe karty pełnej platformy (m.in. opcje, ryzyko VaR, sezon wyników, wykresy) nie są częścią tej wersji.</li>
+    </ul>
+  </section>
+
+  <p class="start-teraz" id="start-teraz" hidden></p>
+
+  <section class="start-karty" aria-label="Karty dostępne w wersji poglądowej">
+    <a class="start-karta" href="stan-rynku/">
+      <h3>Stan rynku</h3>
+      <p>Sygnał rynku, 54 wskaźniki w grupach Makro, Rynek i Technika, indeks nastrojów, historia sygnału od 2000 r. i tabela jego skuteczności.</p>
+      <span class="start-przejdz">Otwórz kartę →</span>
+    </a>
+    <a class="start-karta" href="biblioteka/">
+      <h3>Biblioteka</h3>
+      <p>Notatki o narzędziach użytych w projekcie: do czego służą, gdzie ich używam i jak z nich korzystać.</p>
+      <span class="start-przejdz">Otwórz kartę →</span>
+    </a>
+    <a class="start-karta" href="https://github.com/kobimpw/platforma_inwestycyjna">
+      <h3>Kod i dokumentacja</h3>
+      <p>README, specyfikacja karty Stan rynku, testy, warstwa SQL i konfiguracja CI w repozytorium na GitHubie.</p>
+      <span class="start-przejdz">Zobacz repozytorium →</span>
+    </a>
+  </section>
+
+  <section class="start-brak">
+    <h2>Jak czytać tę wersję</h2>
+    <ul>
+      <li>Karta „Stan rynku" jest w pełni działająca: liczy ją skrypt w Pythonie, a przeglądarka tylko czyta gotowy plik z danymi, więc bez serwera wygląda tak samo jak w pełnej platformie.</li>
+      <li>Okna można przesuwać, zmieniać im rozmiar i układać w zakładki, a kliknięcie numerka bloku pokazuje fragment kodu, z którego ten blok powstał.</li>
+      <li>Motyw Dzień, Noc albo Auto przełączysz ikoną na dole paska po lewej.</li>
+    </ul>
+  </section>
+
+  <footer class="start-stopka">
+    Materiał informacyjny, nie rekomendacja inwestycyjna. Dane pochodzą z publicznych lub bezpłatnych źródeł (FRED, Cboe, Yahoo Finance), a zakres i warunki ich użycia wyznaczają ich dostawcy.
+  </footer>
+</main>
+<script>
+  // Pokazuje, z której sesji jest migawka i jaki sygnał wtedy wyszedł (dane z tego samego pliku, który czyta karta Stan rynku).
+  (function () {
+    var miejsce = document.getElementById("start-teraz");
+    fetch("data/stan-rynku/stan.json", { cache: "no-cache" })
+      .then(function (odp) { return odp.ok ? odp.json() : Promise.reject(new Error("HTTP " + odp.status)); })
+      .then(function (d) {
+        var dzien = String(d.sesja).split("-").reverse().join(".");
+        var wynik = d.sygnal && typeof d.sygnal.wynik === "number" ? (d.sygnal.wynik > 0 ? "+" : "") + d.sygnal.wynik.toFixed(0) : "";
+        var etykieta = d.sygnal && d.sygnal.etykieta ? d.sygnal.etykieta.toLowerCase() : "";
+        miejsce.innerHTML = "Migawka danych z sesji <strong>" + dzien + "</strong>" + (etykieta ? ": sygnał rynku <strong>" + etykieta + "</strong> (" + wynik + " w skali od -100 do +100)." : ".");
+        miejsce.hidden = false;
+      })
+      .catch(function () { /* brak pliku z danymi: strona startowa działa bez tej informacji */ });
+  })();
+</script>
+</body>
+</html>

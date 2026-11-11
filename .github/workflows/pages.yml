@@ -1,0 +1,57 @@
+name: Pages, statyczna strona poglądowa
+
+# Składa katalog _site/ skryptem src/narzedzia/zbuduj_strone.py (strona z web/ plus dwa pliki danych karty Stan rynku)
+# i publikuje go na GitHub Pages. To wersja poglądowa: dane są zamrożone, więc workflow nie pobiera niczego z sieci.
+#
+# Jednorazowo trzeba w ustawieniach repozytorium wybrać: Settings, Pages, Build and deployment, Source: GitHub Actions.
+# Potem wystarczy uruchomić ten workflow ręcznie (Actions, Pages, Run workflow) albo zrobić push zmiany na gałąź main.
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - "data/stan-rynku/stan.json"
+      - "data/stan-rynku/ocena.json"
+      - "src/narzedzia/zbuduj_strone.py"
+      - ".github/workflows/pages.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  wdroz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.wdrozenie.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python 3.11 (skrypt budujący używa tylko biblioteki standardowej)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Złóż stronę w katalogu _site
+        run: python src/narzedzia/zbuduj_strone.py
+
+      - name: Przygotuj Pages
+        uses: actions/configure-pages@v5
+
+      - name: Wyślij artefakt strony
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Opublikuj na GitHub Pages
+        id: wdrozenie
+        uses: actions/deploy-pages@v4

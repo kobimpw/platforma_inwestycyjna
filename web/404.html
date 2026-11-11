@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nie ma takiej strony</title>
+<link rel="icon" href="data:," />
+<style>
+  /* Strona 404 wersji poglądowej: celowo bez zależności od reszty (GitHub Pages serwuje ją pod dowolnym adresem). */
+  :root { color-scheme: light dark; }
+  body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; font: 15px/1.6 system-ui, sans-serif; }
+  main { max-width: 460px; padding: 24px; text-align: center; }
+  h1 { margin: 0 0 8px; font-size: 22px; }
+  p { margin: 0 0 14px; opacity: 0.8; }
+  a { color: #2962ff; font-weight: 600; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Nie ma takiej strony</h1>
+  <p>To statyczna wersja poglądowa platformy analitycznej, w której są tylko dwie karty: Stan rynku i Biblioteka.</p>
+  <p><a id="start" href="/platforma_inwestycyjna/">Wróć na stronę startową</a></p>
+</main>
+<script>
+  // Na GitHub Pages projektu pierwszy segment adresu to nazwa repozytorium; na własnej domenie strona startowa jest w korzeniu.
+  (function () {
+    var segment = location.pathname.split("/")[1];
+    document.getElementById("start").href = location.hostname.slice(-10) === ".github.io" && segment ? "/" + segment + "/" : "/";
+  })();
+</script>
+</body>
+</html>

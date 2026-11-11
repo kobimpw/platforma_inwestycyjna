@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stan rynku</title>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body id="pg-stan-rynku" class="t-strona">
+<script>window.SIDEBAR_ROOT = "../";</script>
+<script src="../shared/sidebar.js"></script>
+<script src="../shared/oznaczenia.js"></script>
+<script src="../shared/projekty.js"></script>
+<script src="../shared/ustawienia.js"></script>
+<script src="../shared/przestrzen.js"></script>
+<main>
+  <div id="st-przestrzen" class="prz-karta">
+    <div class="prz-przestrzen"></div>
+    <div class="prz-magazyn" hidden>
+      <section class="karta t-okno t-k4 st-okno-sygnal">
+        <header class="t-naglowek"><h2>Sygnał rynku</h2><div class="t-akcje"><span id="st-sesja" class="st-czas"></span></div></header>
+        <div class="t-tresc">
+          <div id="st-sygnal" class="st-sygnal"><div class="st-pusto">Wczytywanie danych…</div></div>
+          <p class="opis">Sygnał to średnia ważona ocen 27 wskaźników z trzech grup (makro 30%, rynek 35%, technika 35%), w skali od -100 do +100. Każdy wskaźnik dostaje od -2 do +2 punktów według stałej reguły opisanej w jego rozwinięciu, a pasek pod etykietą pokazuje pięć poziomów: od silnie negatywnego (poniżej -40) do silnie pozytywnego (od +40). Sygnał opisuje warunki i ryzyko dla inwestora indeksowego S&amp;P 500, a nie prognozę zwrotu: im jest niższy, tym częściej w historii przychodził spadek indeksu o 10% i więcej w ciągu 3 miesięcy. Pasek nastrojów (od strachu do chciwości) to osobny indeks z siedmiu składników rynkowych.</p>
+        </div>
+      </section>
+
+      <section class="karta t-okno t-k8 t-naroznik st-okno-ocena">
+        <header class="t-naglowek"><h2>Ocena dnia</h2><div class="t-akcje"><span id="st-ocena-czas" class="st-czas"></span></div></header>
+        <div class="t-tresc">
+          <div id="st-ocena" class="st-ocena"><div class="st-pusto">Wczytywanie danych…</div></div>
+          <p class="opis">W pełnej platformie ocenę pisze codziennie rutyna Claude po aktualizacji danych: zaczyna od wyniku liczbowego, czyta wskaźniki, ogólny pogląd rynkowy i wiadomości z dnia, i może przesunąć sygnał najwyżej o jeden poziom, zawsze z uzasadnieniem. W tej statycznej wersji pokazowej oceny się nie odświeżają: gdy ocena nie dotyczy bieżącej sesji, okno pokazuje opis policzony automatycznie z liczb. Starsze oceny są w archiwum na dole okna.</p>
+        </div>
+      </section>
+
+      <section class="karta t-okno t-k4 st-okno-grupa" data-grupa="makro">
+        <header class="t-naglowek"><h2>Makro</h2><div class="t-akcje"><span id="st-wynik-makro" class="st-czas"></span></div></header>
+        <div class="t-tresc st-tresc-lista">
+          <div id="st-lista-makro" class="st-lista"><div class="st-pusto">Wczytywanie danych…</div></div>
+          <p class="opis">Gospodarka USA z danych FRED: wzrost (PKB, GDPNow, CFNAI), rynek pracy, inflacja i stopy procentowe. Dane miesięczne i kwartalne wchodzą do historii sygnału dopiero po typowym opóźnieniu publikacji, żeby wykres nie korzystał z danych, których danego dnia jeszcze nie znano. Każdy wiersz: nazwa, bieżąca wartość, ocena (od -2 do +2; „i” to wskaźnik informacyjny poza sygnałem) i wykresik z ostatniego roku. Kliknij wiersz, żeby zobaczyć, jak go czytać, regułę oceny, wykres z 3 lat i to, jak zachowywał się S&amp;P 500 po sesjach z każdą oceną tego wskaźnika.</p>
+        </div>
+      </section>
+
+      <section class="karta t-okno t-k4 st-okno-grupa" data-grupa="rynek">
+        <header class="t-naglowek"><h2>Rynek</h2><div class="t-akcje"><span id="st-wynik-rynek" class="st-czas"></span></div></header>
+        <div class="t-tresc st-tresc-lista">
+          <div id="st-lista-rynek" class="st-lista"><div class="st-pusto">Wczytywanie danych…</div></div>
+          <p class="opis">Ryzyko, zmienność i nastroje: opcje (put/call z dziennych statystyk Cboe, łańcuch SPX), VIX i jego struktura, spready kredytowe, warunki finansowe, rotacja między sektorami i ucieczka do obligacji. Każdy wiersz: nazwa, bieżąca wartość, ocena (od -2 do +2; „i” to wskaźnik informacyjny poza sygnałem) i wykresik z ostatniego roku. Kliknij wiersz, żeby zobaczyć, jak go czytać, regułę oceny, wykres z 3 lat i to, jak zachowywał się S&amp;P 500 po sesjach z każdą oceną tego wskaźnika.</p>
+        </div>
+      </section>
+
+      <section class="karta t-okno t-k4 st-okno-grupa" data-grupa="technika">
+        <header class="t-naglowek"><h2>Technika</h2><div class="t-akcje"><span id="st-wynik-technika" class="st-czas"></span></div></header>
+        <div class="t-tresc st-tresc-lista">
+          <div id="st-lista-technika" class="st-lista"><div class="st-pusto">Wczytywanie danych…</div></div>
+          <p class="opis">S&amp;P 500 (indeks ^GSPC) z notowań dziennych: trend (średnie 50 i 200 sesji, ADX, MACD), skrajności (RSI Wildera, wstęgi Bollingera), spadek od szczytu i VaR policzony metodą karty VaR. Każdy wiersz: nazwa, bieżąca wartość, ocena (od -2 do +2; „i” to wskaźnik informacyjny poza sygnałem) i wykresik z ostatniego roku. Kliknij wiersz, żeby zobaczyć, jak go czytać, regułę oceny, wykres z 3 lat i to, jak zachowywał się S&amp;P 500 po sesjach z każdą oceną tego wskaźnika.</p>
+        </div>
+      </section>
+
+      <section class="karta t-okno t-k7 st-okno-historia">
+        <header class="t-naglowek"><h2>Historia sygnału</h2><div class="t-akcje">
+          <span id="st-zakres" class="st-przelacznik" role="group" aria-label="Zakres wykresu">
+            <button type="button" class="t-mini" data-zakres="1r">1 rok</button>
+            <button type="button" class="t-mini aktywny" data-zakres="3l">3 lata</button>
+            <button type="button" class="t-mini" data-zakres="max" title="Punkty tygodniowe od początku historii sygnału">całość</button>
+          </span>
+          <label class="st-check" title="Dorysuj wyniki trzech grup: makro, rynek i technika"><input id="st-pokaz-grupy" type="checkbox" /> grupy</label>
+        </div></header>
+        <div class="t-tresc">
+          <div id="st-wykres" class="st-wykres"><div class="st-pusto">Wczytywanie danych…</div></div>
+          <div id="st-wykres-legenda" class="st-legenda"></div>
+          <p class="opis">Górny panel: S&amp;P 500 w skali logarytmicznej (równe odległości to równe zmiany procentowe), a pod nim kolorowy pasek z poziomem sygnału każdego dnia. Dolny panel: wynik sygnału od -100 do +100 na tle pasm pięciu poziomów i indeks nastrojów (przerywana linia, 0–100 przeliczone tak, że 50 wypada na zerze). Historia jest liczona tymi samymi regułami co dziś, a dane makro wchodzą z opóźnieniem publikacji. Najedź na wykres, żeby zobaczyć wartości z danego dnia.</p>
+        </div>
+      </section>
+
+      <section class="karta t-okno t-k5 st-okno-skutecznosc">
+        <header class="t-naglowek"><h2>Skuteczność sygnału</h2><div class="t-akcje"><select id="st-okres" class="st-wybor" title="Okres historii, z którego liczona jest tabela"></select></div></header>
+        <div class="t-tresc t-tresc-tabela">
+          <table id="st-skutecznosc" class="st-tabela"><tbody><tr><td class="pusto">Wczytywanie danych…</td></tr></tbody></table>
+          <div id="st-skutecznosc-wniosek" class="st-wniosek"></div>
+          <p class="opis">Jak czytać tabelę: każdy wiersz zbiera sesje z danym poziomem sygnału (policzonym wstecz tymi samymi regułami) i pokazuje, co działo się z S&amp;P 500 w kolejnych 63 sesjach, czyli około 3 miesiącach. „Spadek ≥10%” to odsetek przypadków, w których indeks w tym czasie choć raz zamknął się co najmniej 10% niżej niż w dniu sygnału; „Obsunięcie” to średni największy spadek. W długiej historii niższy sygnał wyraźnie częściej poprzedzał duże spadki, ale nie przewidywał wysokości zwrotu, a w latach 2020–2026 po najgorszych odczytach przychodziły szybkie odbicia. Okresy po sobie się nakładają, więc sesji nie należy traktować jak niezależnych prób.</p>
+        </div>
+      </section>
+
+      <section class="karta t-okno t-k12 st-okno-zrodla">
+        <header class="t-naglowek"><h2>Źródła danych i aktualizacja</h2><div class="t-akcje"><span id="st-aktualizacja" class="st-czas"></span></div></header>
+        <div class="t-tresc t-tresc-tabela">
+          <table id="st-zrodla" class="st-tabela"><tbody><tr><td class="pusto">Wczytywanie danych…</td></tr></tbody></table>
+          <div id="st-bledy" class="st-bledy"></div>
+          <p class="opis">Dane liczy skrypt src/stan_rynku/stan_rynku.py. W pełnej platformie uruchamia go codziennie GitHub Actions (w dni robocze o 22:40 UTC, po zamknięciu sesji w USA), niezależnie od rutyny Claude, która potem pisze ocenę dnia; w tej statycznej wersji pokazowej dane są zamrożone na sesji widocznej w nagłówku karty. Wszystkie źródła są bezpłatne: FRED (klucz API opcjonalny, a bez niego publiczne pliki CSV), Cboe (dzienne statystyki opcji, historia VIX, łańcuch opcji SPX), Yahoo Finance przez własne proxy i funkcja VaR z modułu src/var/var.py. Gdy któreś źródło zawiedzie, jego wskaźniki pokazują „brak danych”, a błąd trafia na listę pod tabelą.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

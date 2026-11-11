@@ -1,0 +1,5 @@
+# Zależności do pracy nad kodem: testy (pytest) i kontrola jakości (ruff).
+# Użycie: `pip install -r requirements-dev.txt` albo `make install`.
+-r requirements.txt
+pytest==9.2.0
+ruff==0.17.4

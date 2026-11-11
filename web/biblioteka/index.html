@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Biblioteka</title>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="t-strona">
+<script>window.SIDEBAR_ROOT = "../";</script>
+<script src="../shared/sidebar.js"></script>
+<script src="../shared/oznaczenia.js"></script>
+<script src="../shared/okna.js"></script>
+<main>
+  <div class="t-siatka t-dol-wysoki">
+    <section class="karta t-okno t-k12">
+      <header class="t-naglowek"><h2>Szukaj</h2></header>
+      <div class="t-tresc bib-szukaj">
+        <label for="bib-filtr">Szukaj biblioteki</label>
+        <input id="bib-filtr" type="search" placeholder="np. pandas, testy, SQL…" autocomplete="off" />
+        <span id="bib-licznik" class="bib-licznik" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <section class="karta t-okno t-k12 bib-sekcja">
+      <header class="t-naglowek"><h2>Biblioteki <span class="bib-licznik-sekcji">(7)</span></h2></header>
+      <div class="t-tresc">
+        <details class="bib-wpis" data-szukaj="html i css: bez bibliotek html i css interfejs strony w użyciu (czysty html/css, bez frameworka) dla html i css odpowiednikiem „bibliotek&quot; są frameworki wyglądu, takie jak bootstrap czy tailwind css, które dają gotowe klasy do przycisków, siatek i kolorów. ten projekt świadomie z nich nie korzysta: cały wygląd siedzi w jednym pliku `web/style.css`, a kolory pochodzą ze zmiennych (`--tlo`, `--akcent` itd.) zdefiniowanych osobno dla motywu dzień i noc. dzięki temu strona jest lekka, nie zależy od zewnętrznego serwera, a zmiana palety to edycja kilkunastu linii w jednym miejscu. gdybyśmy kiedyś zdecydowali się na framework, ten plik jest właściwym miejscem na dopisanie go i uzasadnienie wyboru.">
+          <summary><span class="bib-nazwa">HTML i CSS: bez bibliotek</span><span class="bib-jezyk">HTML i CSS</span></summary>
+          <div class="bib-tresc">
+            <div class="bib-plakietki"><span class="bib-status bib-status-uzycie">w użyciu (czysty HTML/CSS, bez frameworka)</span><span class="bib-kategoria">Interfejs strony</span></div>
+            <p>Dla HTML i CSS odpowiednikiem „bibliotek" są frameworki wyglądu, takie jak Bootstrap czy Tailwind CSS, które dają gotowe klasy do przycisków, siatek i kolorów.</p>
+            <p>Ten projekt świadomie z nich nie korzysta: cały wygląd siedzi w jednym pliku <code>web/style.css</code>, a kolory pochodzą ze zmiennych (<code>--tlo</code>, <code>--akcent</code> itd.) zdefiniowanych osobno dla motywu Dzień i Noc.</p>
+            <p>Dzięki temu strona jest lekka, nie zależy od zewnętrznego serwera, a zmiana palety to edycja kilkunastu linii w jednym miejscu.</p>
+            <p>Gdybyśmy kiedyś zdecydowali się na framework, ten plik jest właściwym miejscem na dopisanie go i uzasadnienie wyboru.</p>
+            <dl class="bib-szczegoly"><dt>Pakiet</dt><dd>brak</dd><dt>Strona</dt><dd><a href="https://developer.mozilla.org/pl/docs/Web/CSS" target="_blank" rel="noopener noreferrer">https://developer.mozilla.org/pl/docs/Web/CSS</a></dd><dt>Gdzie w projekcie</dt><dd>web/style.css, web/*/index.html</dd><dt>W requirements.txt</dt><dd>nie dotyczy</dd></dl>
+          </div>
+        </details>
+        <details class="bib-wpis" data-szukaj="numpy python dane i obliczenia w użyciu numpy to biblioteka szybkich obliczeń na tablicach liczb: zamiast liczyć element po elemencie w pętli, wykonujesz działanie na całej tablicy naraz, co jest wielokrotnie szybsze i krótsze w zapisie. to właśnie numpy stoi „pod spodem&quot; pandas, więc kolumna `dataframe` jest w gruncie rzeczy tablicą numpy. w projekcie liczy zmienność zrealizowaną, średnie wildera (podstawa rsi i adx) oraz punktację wskaźników według progów, a będzie naturalnym wyborem przy rachunku ryzyka: odchylenie standardowe, korelacje, symulacje monte carlo czy generowanie losowych ścieżek cen. gdy widzisz w kodzie pętlę po liczbach, zwykle da się ją zastąpić jednym działaniem numpy.">
+          <summary><span class="bib-nazwa">numpy</span><span class="bib-jezyk">Python</span></summary>
+          <div class="bib-tresc">
+            <div class="bib-plakietki"><span class="bib-status bib-status-uzycie">w użyciu</span><span class="bib-kategoria">Dane i obliczenia</span></div>
+            <p>numpy to biblioteka szybkich obliczeń na tablicach liczb: zamiast liczyć element po elemencie w pętli, wykonujesz działanie na całej tablicy naraz, co jest wielokrotnie szybsze i krótsze w zapisie.</p>
+            <p>To właśnie numpy stoi „pod spodem" pandas, więc kolumna <code>DataFrame</code> jest w gruncie rzeczy tablicą numpy.</p>
+            <p>W projekcie liczy zmienność zrealizowaną, średnie Wildera (podstawa RSI i ADX) oraz punktację wskaźników według progów, a będzie naturalnym wyborem przy rachunku ryzyka: odchylenie standardowe, korelacje, symulacje Monte Carlo czy generowanie losowych ścieżek cen.</p>
+            <p>Gdy widzisz w kodzie pętlę po liczbach, zwykle da się ją zastąpić jednym działaniem numpy.</p>
+            <dl class="bib-szczegoly"><dt>Pakiet</dt><dd>numpy</dd><dt>Strona</dt><dd><a href="https://numpy.org" target="_blank" rel="noopener noreferrer">https://numpy.org</a></dd><dt>Gdzie w projekcie</dt><dd>src/stan_rynku/stan_rynku.py</dd><dt>W requirements.txt</dt><dd>tak (przypięta jawnie; numpy 2.4.x to ostatnia linia z obsługą Pythona 3.11)</dd></dl>
+          </div>
+        </details>
+        <details class="bib-wpis" data-szukaj="pandas python dane i obliczenia w użyciu pandas to podstawowe narzędzie do pracy z danymi tabelarycznymi: jego główny obiekt, `dataframe`, działa jak arkusz kalkulacyjny w pamięci, w którym każda kolumna ma nazwę i typ, a wiersze można filtrować, sortować, łączyć i grupować jednym poleceniem. w tym projekcie służy do wszystkiego, co przypomina tabelę: notowania z yahoo finance, serie makroekonomiczne z fred, historia vix i wskaźniki karty stan rynku. możesz go używać, gdy chcesz szybko przeliczyć kolumnę na podstawie innych (np. zwroty z cen), połączyć dwa zestawy danych po wspólnym kluczu albo policzyć średnią kroczącą bez pisania pętli. zasada praktyczna: jeśli dane mają kształt tabeli, najpierw pomyśl o pandas, a dopiero potem o własnych pętlach.">
+          <summary><span class="bib-nazwa">pandas</span><span class="bib-jezyk">Python</span></summary>
+          <div class="bib-tresc">
+            <div class="bib-plakietki"><span class="bib-status bib-status-uzycie">w użyciu</span><span class="bib-kategoria">Dane i obliczenia</span></div>
+            <p>pandas to podstawowe narzędzie do pracy z danymi tabelarycznymi: jego główny obiekt, <code>DataFrame</code>, działa jak arkusz kalkulacyjny w pamięci, w którym każda kolumna ma nazwę i typ, a wiersze można filtrować, sortować, łączyć i grupować jednym poleceniem.</p>
+            <p>W tym projekcie służy do wszystkiego, co przypomina tabelę: notowania z Yahoo Finance, serie makroekonomiczne z FRED, historia VIX i wskaźniki karty Stan rynku.</p>
+            <p>Możesz go używać, gdy chcesz szybko przeliczyć kolumnę na podstawie innych (np. zwroty z cen), połączyć dwa zestawy danych po wspólnym kluczu albo policzyć średnią kroczącą bez pisania pętli.</p>
+            <p>Zasada praktyczna: jeśli dane mają kształt tabeli, najpierw pomyśl o pandas, a dopiero potem o własnych pętlach.</p>
+            <dl class="bib-szczegoly"><dt>Pakiet</dt><dd>pandas</dd><dt>Strona</dt><dd><a href="https://pandas.pydata.org" target="_blank" rel="noopener noreferrer">https://pandas.pydata.org</a></dd><dt>Gdzie w projekcie</dt><dd>src/stan_rynku/stan_rynku.py, src/var/var.py</dd><dt>W requirements.txt</dt><dd>tak (wersja przypięta)</dd></dl>
+          </div>
+        </details>
+        <details class="bib-wpis" data-szukaj="pytest python testy i jakość kodu w użyciu pytest to najpopularniejsze narzędzie do pisania i uruchamiania testów w pythonie: test to zwykła funkcja, której nazwa zaczyna się od `test_`, a sprawdzenie to zwykłe `assert`. po uruchomieniu pokazuje, który test i dlaczego nie przeszedł. w projekcie testuje rachunki (var, wskaźniki, tabela skuteczności sygnału), kontrakty danych, spójność ścieżek do plików, regenerację stron kart oraz widoki sql, a te ostatnie porównuje z niezależnym rachunkiem w pandas. przydaje się zwłaszcza przy zmianach, które dotykają wielu plików naraz: zielone testy po przeniesieniu katalogów albo zmianie progu to dowód, że nic się nie zepsuło po cichu.">
+          <summary><span class="bib-nazwa">pytest</span><span class="bib-jezyk">Python</span></summary>
+          <div class="bib-tresc">
+            <div class="bib-plakietki"><span class="bib-status bib-status-uzycie">w użyciu</span><span class="bib-kategoria">Testy i jakość kodu</span></div>
+            <p>pytest to najpopularniejsze narzędzie do pisania i uruchamiania testów w Pythonie: test to zwykła funkcja, której nazwa zaczyna się od <code>test_</code>, a sprawdzenie to zwykłe <code>assert</code>. Po uruchomieniu pokazuje, który test i dlaczego nie przeszedł.</p>
+            <p>W projekcie testuje rachunki (VaR, wskaźniki, tabela skuteczności sygnału), kontrakty danych, spójność ścieżek do plików, regenerację stron kart oraz widoki SQL, a te ostatnie porównuje z niezależnym rachunkiem w pandas.</p>
+            <p>Przydaje się zwłaszcza przy zmianach, które dotykają wielu plików naraz: zielone testy po przeniesieniu katalogów albo zmianie progu to dowód, że nic się nie zepsuło po cichu.</p>
+            <dl class="bib-szczegoly"><dt>Pakiet</dt><dd>pytest</dd><dt>Strona</dt><dd><a href="https://docs.pytest.org" target="_blank" rel="noopener noreferrer">https://docs.pytest.org</a></dd><dt>Gdzie w projekcie</dt><dd>tests/*.py, konfiguracja w pyproject.toml, uruchamiany przez <code>make test</code> i workflow .github/workflows/ci.yml</dd><dt>W requirements.txt</dt><dd>nie w requirements.txt, tak w requirements-dev.txt (wersja przypięta)</dd></dl>
+          </div>
+        </details>
+        <details class="bib-wpis" data-szukaj="ruff python testy i jakość kodu w użyciu ruff to bardzo szybki program, który czyta kod pythona i wskazuje w nim błędy i niedbałości, zanim kod w ogóle się uruchomi: nieużywane importy, odwołania do nieistniejących nazw, błędy składni. w projekcie działa w trybie samych błędów (reguły `e9` i `f`), bo pliki kart zawierają html i js jako długie teksty i reguły stylu tylko by hałasowały. warto go uruchamiać przed każdym commitem (`make lint`), bo błąd w nazwie zmiennej ujawnia się wtedy w sekundę, a nie dopiero podczas nocnego przebiegu workflowu.">
+          <summary><span class="bib-nazwa">ruff</span><span class="bib-jezyk">Python</span></summary>
+          <div class="bib-tresc">
+            <div class="bib-plakietki"><span class="bib-status bib-status-uzycie">w użyciu</span><span class="bib-kategoria">Testy i jakość kodu</span></div>
+            <p>ruff to bardzo szybki program, który czyta kod Pythona i wskazuje w nim błędy i niedbałości, zanim kod w ogóle się uruchomi: nieużywane importy, odwołania do nieistniejących nazw, błędy składni.</p>
+            <p>W projekcie działa w trybie samych błędów (reguły <code>E9</code> i <code>F</code>), bo pliki kart zawierają HTML i JS jako długie teksty i reguły stylu tylko by hałasowały.</p>
+            <p>Warto go uruchamiać przed każdym commitem (<code>make lint</code>), bo błąd w nazwie zmiennej ujawnia się wtedy w sekundę, a nie dopiero podczas nocnego przebiegu workflowu.</p>
+            <dl class="bib-szczegoly"><dt>Pakiet</dt><dd>ruff</dd><dt>Strona</dt><dd><a href="https://docs.astral.sh/ruff/" target="_blank" rel="noopener noreferrer">https://docs.astral.sh/ruff/</a></dd><dt>Gdzie w projekcie</dt><dd>konfiguracja w pyproject.toml, uruchamiany przez <code>make lint</code> i workflow .github/workflows/ci.yml</dd><dt>W requirements.txt</dt><dd>nie w requirements.txt, tak w requirements-dev.txt (wersja przypięta)</dd></dl>
+          </div>
+        </details>
+        <details class="bib-wpis" data-szukaj="sqlite3 python dane i sql w użyciu sqlite3 to wbudowana w pythona baza danych sql, zapisana w jednym pliku albo trzymana w pamięci. nie trzeba instalować ani uruchamiać serwera: `sqlite3.connect(&quot;:memory:&quot;)` daje gotową bazę, do której wysyłasz zwykłe zapytania sql. w projekcie buduje z plików w `data/` bazę analityczną (tabele z kluczami i ograniczeniami oraz widoki z funkcjami okna). liczymy na niej m.in. tabelę skuteczności sygnału rynku i kontrolę świeżości danych. baza jest pochodna: powstaje od zera poleceniem `make db`, więc nie trafia do repozytorium. warto po nią sięgać, gdy pytanie dotyczy historii i grupowania (ranking, udział w sumie, zmiana względem poprzedniego okresu), bo funkcje okna (`lead`, `min() over`, `count() over`) robią to w jednym zapytaniu zamiast w pętli.">
+          <summary><span class="bib-nazwa">sqlite3</span><span class="bib-jezyk">Python</span></summary>
+          <div class="bib-tresc">
+            <div class="bib-plakietki"><span class="bib-status bib-status-uzycie">w użyciu</span><span class="bib-kategoria">Dane i SQL</span></div>
+            <p>sqlite3 to wbudowana w Pythona baza danych SQL, zapisana w jednym pliku albo trzymana w pamięci. Nie trzeba instalować ani uruchamiać serwera: <code>sqlite3.connect(":memory:")</code> daje gotową bazę, do której wysyłasz zwykłe zapytania SQL.</p>
+            <p>W projekcie buduje z plików w <code>data/</code> bazę analityczną (tabele z kluczami i ograniczeniami oraz widoki z funkcjami okna). Liczymy na niej m.in. tabelę skuteczności sygnału rynku i kontrolę świeżości danych. Baza jest pochodna: powstaje od zera poleceniem <code>make db</code>, więc nie trafia do repozytorium.</p>
+            <p>Warto po nią sięgać, gdy pytanie dotyczy historii i grupowania (ranking, udział w sumie, zmiana względem poprzedniego okresu), bo funkcje okna (<code>LEAD</code>, <code>MIN() OVER</code>, <code>COUNT() OVER</code>) robią to w jednym zapytaniu zamiast w pętli.</p>
+            <dl class="bib-szczegoly"><dt>Pakiet</dt><dd>sqlite3 (biblioteka standardowa Pythona, nie wymaga instalacji)</dd><dt>Strona</dt><dd><a href="https://docs.python.org/3/library/sqlite3.html" target="_blank" rel="noopener noreferrer">https://docs.python.org/3/library/sqlite3.html</a></dd><dt>Gdzie w projekcie</dt><dd>src/baza/baza.py, sql/schema.sql, sql/widoki.sql, tests/test_baza.py</dd><dt>W requirements.txt</dt><dd>nie dotyczy (część biblioteki standardowej)</dd></dl>
+          </div>
+        </details>
+        <details class="bib-wpis" data-szukaj="yfinance python dane rynkowe w użyciu yfinance to nieoficjalna biblioteka, która pobiera z yahoo finance notowania historyczne, dane o spółkach i łańcuchy opcji, zwracając je od razu jako `dataframe` z pandas. w projekcie dostarcza ceny do liczenia var (ryzyka strat). karta stan rynku z niej nie korzysta, bo notowania dla swoich wskaźników bierze przez własne proxy. pamiętaj, że to „nieoficjalne&quot; źródło: yahoo może zmienić format lub zablokować zapytania, więc do rzeczy ważnych warto mieć plan awaryjny. użyj jej, gdy potrzebujesz historii cen dowolnego tickera bez zakładania konta ani klucza api.">
+          <summary><span class="bib-nazwa">yfinance</span><span class="bib-jezyk">Python</span></summary>
+          <div class="bib-tresc">
+            <div class="bib-plakietki"><span class="bib-status bib-status-uzycie">w użyciu</span><span class="bib-kategoria">Dane rynkowe</span></div>
+            <p>yfinance to nieoficjalna biblioteka, która pobiera z Yahoo Finance notowania historyczne, dane o spółkach i łańcuchy opcji, zwracając je od razu jako <code>DataFrame</code> z pandas.</p>
+            <p>W projekcie dostarcza ceny do liczenia VaR (ryzyka strat). Karta Stan rynku z niej nie korzysta, bo notowania dla swoich wskaźników bierze przez własne proxy.</p>
+            <p>Pamiętaj, że to „nieoficjalne" źródło: Yahoo może zmienić format lub zablokować zapytania, więc do rzeczy ważnych warto mieć plan awaryjny.</p>
+            <p>Użyj jej, gdy potrzebujesz historii cen dowolnego tickera bez zakładania konta ani klucza API.</p>
+            <dl class="bib-szczegoly"><dt>Pakiet</dt><dd>yfinance</dd><dt>Strona</dt><dd><a href="https://github.com/ranaroussi/yfinance" target="_blank" rel="noopener noreferrer">https://github.com/ranaroussi/yfinance</a></dd><dt>Gdzie w projekcie</dt><dd>src/var/var.py (funkcja pobierająca notowania do rachunku VaR)</dd><dt>W requirements.txt</dt><dd>nie w requirements.txt, tak w requirements-tools.txt (wersja przypięta)</dd></dl>
+          </div>
+        </details>
+      </div>
+    </section>
+  </div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# Narzędzie opcjonalne, uruchamiane lokalnie. Testy ani budowa strony go nie potrzebują.
+#
+#   yfinance   pobieranie notowań w src/var/var.py (karta VaR; jej strony nie ma w tej wersji pokazowej)
+-r requirements.txt
+yfinance==1.8.0

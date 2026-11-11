@@ -1,0 +1,24 @@
+[project]
+name = "platforma-inwestycyjna"
+version = "0.1.0"
+description = "Platforma analityczna dla inwestora indeksowego (S&P 500): wskaźniki rynku, jeden sygnał i karty w przeglądarce. To statyczna wersja poglądowa dla rekrutera."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "kobimpw" }]
+# To nie jest instalowany pakiet: skrypty uruchamia się wprost (python src/<karta>/<karta>.py).
+# Zależności są w requirements.txt (skrypty), requirements-dev.txt (testy) i requirements-tools.txt (narzędzie opcjonalne).
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q -ra"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 140
+src = ["src"]
+
+[tool.ruff.lint]
+# Tylko błędy: składnia (E9) i błędy logiczne z pyflakes (F), np. nieużywane importy i niezdefiniowane nazwy.
+# Reguły stylu pomijamy celowo: pliki kart zawierają HTML i JS jako długie teksty, a ich układ pilnuje test regeneracji.
+select = ["E9", "F"]

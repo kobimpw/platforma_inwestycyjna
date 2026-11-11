@@ -1,0 +1,34 @@
+{
+  "id": "037-nowa-karta-stan-rynku",
+  "typ": "zadanie",
+  "tytul": "Nowa karta: stan rynku",
+  "priorytet": 0,
+  "sekcja": "",
+  "status": "zrobione",
+  "zakres": {
+    "karta": "",
+    "typ": "ogolne",
+    "cel": ""
+  },
+  "podzadania": [],
+  "materialy": [
+    {
+      "id": "spec-stan-rynku",
+      "rodzaj": "plik",
+      "sciezka": "projekty/037-nowa-karta-stan-rynku/pliki/specyfikacja-stan-rynku.md",
+      "nazwa": "specyfikacja-stan-rynku.md",
+      "rozmiar": 25532,
+      "typ": "text/markdown",
+      "czas": 1793534132956
+    }
+  ],
+  "dziennik": [
+    {
+      "id": "st037dz1793534132956",
+      "tresc": "Zbudowana karta docs/stan-rynku/ („Stan rynku” w szynie nawigacji, pod „Pozycją”): 54 wskaźniki (27 ocenianych, 27 informacyjnych) w grupach Makro, Rynek i Technika, sygnał rynku od -100 do +100 z pięcioma poziomami, indeks nastrojów (strach i chciwość), historia sygnału od 2000 r., tabela skuteczności i źródła danych. Opcje z API Cboe i własnych obliczeń (put/call z dziennych statystyk Cboe z archiwum od 10.2019, gamma i skośność z łańcucha SPX), VaR funkcją z karty VaR. Dane odświeża raz dziennie workflow stan-rynku-aktualizuj.yml (dni robocze 22:40 UTC), niezależnie od rutyny Claude, która od wtorku do soboty o 5:50 pisze ocenę dnia (pierwsza ocena: sesja 30.10.2026, sygnał pozytywny, +21). Sprawdzenie na historii: sygnał dobrze porządkuje ryzyko spadku o 10% w 3 mies. (od 4% do 44%), ale nie przewiduje zwrotu. Audyt wskaźników i decyzje do podjęcia: materiał specyfikacja-stan-rynku.md (sekcja 9: sekret FRED_API_KEY i wymiana klucza z opisu zadania).",
+      "czas": 1793534132956
+    }
+  ],
+  "utworzono": "2026-11-01T10:46:38.880Z",
+  "zmieniono": "2026-11-02T20:38:04.693Z"
+}

@@ -1,0 +1,33 @@
+{
+  "wersjaInstrukcji": 1,
+  "aktualna": {
+    "data": "2026-11-01",
+    "sesja": "2026-10-30",
+    "wynik": 21.2,
+    "poziomLiczbowy": "pozytywny",
+    "sygnal": "pozytywny",
+    "tytul": "Trend i gospodarka wciąż wspierają indeks, ale rynek wyraźnie nerwowieje",
+    "opis": "Sygnał jest pozytywny: wynik **+21** na 100, ale tylko 6 punktów nad granicą poziomu neutralnego (+15) i o 5 punktów niżej niż dzień wcześniej. Najmocniej wspiera go technika (+38): S&P 500 zamknął piątek na poziomie 7580, **3,7%** nad rosnącą średnią z 200 sesji. Makro (+24) też jest po stronie indeksu, bo PKB rósł w III kwartale o 3,4% w skali roku, GDPNow szacuje bieżący kwartał na 3,2%, a wniosków o zasiłek jest o 13% mniej niż rok temu.\n\nSłaba jest za to grupa rynkowa (+3), czyli nastroje i ceny. W piątek S&P 500 stracił 1,8%, a Nasdaq 100 3,5% (według ING na nawrocie obaw o sztuczną inteligencję), VIX, czyli oczekiwana zmienność na 30 dni, jest wyżej niż w 78% sesji z ostatniego roku, a kapitał przesuwa się od spółek cyklicznych do defensywnych i do obligacji. Indeks nastrojów spadł w miesiąc o 16 punktów, do **28** (strach). W tle jest inflacja CPI 4,0% i rentowność obligacji 2-letnich 4,61%, czyli powyżej górnej granicy stopy Fed (4,00%): rynek liczy się z podwyżką stóp, o której pisze ING.\n\nW historii od 2000 roku po sesjach z sygnałem pozytywnym S&P 500 spadał w ciągu 3 miesięcy o 10% lub więcej w około **9%** przypadków, wobec 17% dla wszystkich sesji. Tło nadal sprzyja trzymaniu indeksu, ale ryzyko krótkoterminowe wyraźnie wzrosło.",
+    "za": [
+      "Trend długoterminowy: S&P 500 **3,7%** nad rosnącą średnią z 200 sesji, a średnia z 50 sesji 5,3% nad średnią z 200.",
+      "Gospodarka rośnie: PKB **+3,4%** w III kw. (w skali roku), GDPNow +3,2% dla IV kw., reguła Sahm 0,00, czyli bez alarmu recesji.",
+      "Bez napięć w finansowaniu firm: spread Baa 1,49 pkt proc. (niżej niż w 87% sesji z 5 lat), indeks warunków finansowych NFCI -0,49, czyli luźniej niż przeciętnie.",
+      "Premia za ryzyko +7,6 pkt: VIX 19,4 przy zmienności, którą indeks faktycznie miał w 21 sesjach, 11,8%. Opcje wyceniają więcej strachu, niż widać w ruchach kursu."
+    ],
+    "przeciw": [
+      "Inflacja i stopy: CPI **4,0%** r/r, rentowność 10-letnia 4,98%, 2-letnia 4,61% powyżej stopy Fed; według ING rynek wycenia grudniową podwyżkę.",
+      "Ucieczka od ryzyka: spółki cykliczne (XLY) straciły względem defensywnych (XLP) 7,8% w 3 miesiące, a obligacje (IEF) wygrały z akcjami (SPY) o 4,9 pkt proc. w 20 sesji.",
+      "Słabnący impet: MACD (różnica średnich 12 i 26 sesji) spadł poniżej zera i linii sygnału, a indeks nastrojów stracił w miesiąc 16 punktów, do 28 (strach).",
+      "Ropa Brent **113 USD** (+10,9% w miesiąc) przy napięciach wokół Iranu podbija inflację i ryzyko podwyżek stóp.",
+      "Ekspozycja gamma dealerów SPX około -54 mld USD na 1% ruchu: przy takim ustawieniu animatorzy rynku mogą przyspieszać ruchy (wskaźnik informacyjny, bez historii do kalibracji)."
+    ],
+    "naCoPatrzec": [
+      "Wyniki Apple (waga w indeksie ok. 7,7%) i AMD na początku tygodnia, według kalendarza wyników z pigułki dnia Social.",
+      "Wybory połowiczne w USA we wtorek 3 listopada; ING wskazuje ryzyko sporu o limit zadłużenia.",
+      "Próg poziomu neutralnego: wynik +21 przy granicy +15; struktura VIX/VIX3M 0,935, a ostrzeżenie zaczyna się od 0,97."
+    ],
+    "wersjaInstrukcji": 1,
+    "autor": "claude"
+  },
+  "archiwum": []
+}
